@@ -9,24 +9,36 @@ on:
 jobs:
   analyze-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
     steps:
       - uses: actions/checkout@v4
+
       - name: Skip if Flutter app does not exist yet (Phase 0)
         if: hashFiles('app/pubspec.yaml') == ''
-        run: exit 0
+        run: |
+          echo "app/ not created yet (Phase 0). Nothing to build."
+
       - uses: subosito/flutter-action@v2
         if: hashFiles('app/pubspec.yaml') != ''
         with:
           channel: stable
           flutter-version: 3.24.0
-      - run: flutter pub get
+
+      - name: Install dependencies
         if: hashFiles('app/pubspec.yaml') != ''
-      - run: dart format --output=none --set-exit-if-changed .
+        working-directory: app
+        run: flutter pub get
+
+      - name: Format check
         if: hashFiles('app/pubspec.yaml') != ''
-      - run: dart analyze
+        working-directory: app
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
         if: hashFiles('app/pubspec.yaml') != ''
-      - run: flutter test
+        working-directory: app
+        run: dart analyze
+
+      - name: Test
         if: hashFiles('app/pubspec.yaml') != ''
+        working-directory: app
+        run: flutter test
