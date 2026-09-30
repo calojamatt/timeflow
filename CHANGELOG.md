@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `StartWork` use case with local-day bucketing (#15)
 - `StopWork` use case (#16)
 - Today screen with timer state and session list (#17)
+- Start/Stop toggle button wired to the use cases (#18)
 
 <!--
 Template for issue-driven entries (add under Unreleased → Added/Changed/Fixed):
