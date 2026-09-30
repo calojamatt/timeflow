@@ -1,0 +1,32 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant UI as TodayScreen
+    participant C as TodayController
+    participant UC as StartWork / StopWork
+    participant R as WorkSessionRepository
+    participant DB as SQLite (drift)
+
+    Note over U,DB: Start a work session
+    U->>UI: tap Start
+    UI->>C: start()
+    C->>UC: start(now)
+    UC->>R: open(WorkSession(startedAt: now, endedAt: null))
+    R->>DB: INSERT open session
+    DB-->>R: ok
+    R-->>UC: session
+    UC-->>C: open session
+    C-->>UI: state = running
+    UI-->>U: live timer (derived from startedAt, no background counter)
+
+    Note over U,DB: Stop the work session
+    U->>UI: tap Stop
+    UI->>C: stop()
+    C->>UC: stop(now)
+    UC->>R: close(sessionId, endedAt: now)
+    R->>DB: UPDATE ended_at
+    DB-->>R: ok
+    R-->>UC: closed session
+    UC-->>C: closed session
+    C-->>UI: state = idle + today total
+    UI-->>U: show session duration + daily total

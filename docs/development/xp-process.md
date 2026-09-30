@@ -18,6 +18,11 @@ solo-plus-agent team. The goal is fast, correct, shippable increments.
 7. **Weekly demo.** Show working software, not slides.
 8. **Lightweight backlog.** Issues are small and actionable; no estimation ceremony.
 
+## Branching & commits
+
+Branches follow GitFlow and commits use Conventional Commits with the issue
+number. See [gitflow.md](gitflow.md) for the full delivery process.
+
 ## Cadence
 
 - Pull the top **READY** issue.

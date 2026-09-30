@@ -1,0 +1,23 @@
+flowchart TB
+    subgraph device["Mobile device (iOS or Android)"]
+        subgraph app["TimeFlow app (Flutter)"]
+            P["presentation\n(Flutter widgets + Riverpod)"]
+            D["domain\n(pure Dart entities + use cases)"]
+            DA["data\n(drift repository)"]
+        end
+        DB[("SQLite database\ndrift · work_session table")]
+    end
+
+    P --> D --> DA --> DB
+
+    subgraph stores["Distribution"]
+        AS["App Store (iOS)"]
+        GP["Google Play (Android)"]
+    end
+    app --> AS
+    app --> GP
+
+    subgraph future["Future (Phase 6)"]
+        SYNC["Cloud sync service\n(offline-first, E2E encrypted)"]
+    end
+    DB -.-> SYNC

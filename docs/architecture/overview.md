@@ -98,6 +98,11 @@ Rules:
 - **Sync (Phase 6)** — a sync boundary behind the repository, conflict resolution,
   end-to-end encryption.
 
-## 9. Diagram
+## 9. Diagrams
 
-See [diagrams/architecture.mmd](diagrams/architecture.mmd).
+| Diagram | File | Purpose |
+|---|---|---|
+| Component / layering | [diagrams/architecture.mmd](diagrams/architecture.mmd) | The three layers and their dependencies |
+| Deployment | [diagrams/deployment.mmd](diagrams/deployment.mmd) | Where code runs: device, SQLite, app stores, future sync |
+| Sequence — work session | [diagrams/sequence-work-session.mmd](diagrams/sequence-work-session.mmd) | Start/Stop flow through all layers |
+| Sequence — recovery | [diagrams/sequence-recovery.mmd](diagrams/sequence-recovery.mmd) | Timer resume after kill/lock/reboot |

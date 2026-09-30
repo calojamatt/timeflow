@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant UI as TodayScreen (on launch)
+    participant C as TodayController
+    participant R as WorkSessionRepository
+    participant DB as SQLite (drift)
+
+    Note over U,DB: App reopened after kill / lock / reboot
+    U->>UI: open app
+    UI->>C: loadToday()
+    C->>R: findOpenSession()
+    R->>DB: SELECT WHERE ended_at IS NULL
+    DB-->>R: open session (startedAt)
+    R-->>C: open session
+    C-->>UI: state = running (resumed)
+    UI-->>U: live timer from persisted startedAt (no drift, no loss)
