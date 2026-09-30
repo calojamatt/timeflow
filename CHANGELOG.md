@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `WorkSessionRepository` (start/stop/findOpen/getByDay) with drift implementation (#14)
 - `StartWork` use case with local-day bucketing (#15)
 - `StopWork` use case (#16)
+- Today screen with timer state and session list (#17)
 
 <!--
 Template for issue-driven entries (add under Unreleased → Added/Changed/Fixed):
