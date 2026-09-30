@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeflow/domain/local_day.dart';
 import 'package:timeflow/domain/work_session.dart';
@@ -29,9 +31,12 @@ final todayControllerProvider = NotifierProvider<TodayController, TodayState>(
 );
 
 class TodayController extends Notifier<TodayState> {
+  Timer? _ticker;
+
   @override
   TodayState build() {
     final now = ref.read(clockProvider).now();
+    ref.onDispose(_stopTicker);
     Future.microtask(load);
     return TodayState(openSession: null, sessions: const [], now: now);
   }
@@ -42,7 +47,26 @@ class TodayController extends Notifier<TodayState> {
     final open = await repository.findOpen();
     final day = open?.localDay ?? localDayFrom(now);
     final sessions = await repository.getByDay(day);
+    open == null ? _stopTicker() : _startTicker();
     state = TodayState(openSession: open, sessions: sessions, now: now);
+  }
+
+  void _startTicker() {
+    _ticker ??= Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  }
+
+  void _stopTicker() {
+    _ticker?.cancel();
+    _ticker = null;
+  }
+
+  void _tick() {
+    final now = ref.read(clockProvider).now();
+    state = TodayState(
+      openSession: state.openSession,
+      sessions: state.sessions,
+      now: now,
+    );
   }
 
   /// Starts a new work session (no-op if one is already open).
