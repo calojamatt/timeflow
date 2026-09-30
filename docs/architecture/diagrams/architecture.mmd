@@ -1,0 +1,23 @@
+flowchart TB
+    subgraph Presentation["presentation (Flutter + Riverpod)"]
+        UI["TodayScreen / TimerControl / SessionList"]
+        Ctrl["TodayController"]
+    end
+
+    subgraph Domain["domain (pure Dart)"]
+        WS["WorkSession entity"]
+        UCs["Use cases: StartWork · StopWork · GetDaySummary"]
+        CLK["Clock interface"]
+    end
+
+    subgraph Data["data (drift/SQLite)"]
+        REPO["WorkSessionRepository"]
+        DB["AppDatabase (drift)"]
+    end
+
+    UI --> Ctrl
+    Ctrl --> UCs
+    UCs --> WS
+    UCs --> CLK
+    UCs --> REPO
+    REPO --> DB
