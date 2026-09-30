@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `WorkSession` domain entity with start/end/elapsed time (#12)
 - drift `work_session` table with a single-open-session unique index (#13)
 - `WorkSessionRepository` (start/stop/findOpen/getByDay) with drift implementation (#14)
+- `StartWork` use case with local-day bucketing (#15)
 
 <!--
 Template for issue-driven entries (add under Unreleased → Added/Changed/Fixed):
