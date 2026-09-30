@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   analyze-and-test:
@@ -21,7 +21,7 @@ jobs:
         if: hashFiles('app/pubspec.yaml') != ''
         with:
           channel: stable
-          flutter-version: 3.24.0
+          flutter-version: 3.47.5
 
       - name: Install dependencies
         if: hashFiles('app/pubspec.yaml') != ''
