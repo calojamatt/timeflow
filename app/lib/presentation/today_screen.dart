@@ -77,15 +77,15 @@ class _SessionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final start = formatClockTime(session.startedAtUtc.toLocal());
     final end = session.endedAtUtc;
-    final duration = end == null
-        ? Duration.zero
-        : end.difference(session.startedAtUtc);
+    final endText = end == null ? 'Running' : formatClockTime(end.toLocal());
 
     return ListTile(
-      title: Text(formatClockTime(session.startedAtUtc.toLocal())),
-      subtitle: end == null ? const Text('Running') : null,
-      trailing: end == null ? null : Text(formatDuration(duration)),
+      title: Text('$start – $endText'),
+      trailing: end == null
+          ? null
+          : Text(formatDuration(end.difference(session.startedAtUtc))),
     );
   }
 }
