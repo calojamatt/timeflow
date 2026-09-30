@@ -55,8 +55,10 @@ Examples:
 5. Push and open a **PR** against `develop` (`gh pr create`), linked via
    `Closes #<issue>`.
 6. CI must be green (`dart format`, `dart analyze`, `flutter test`).
-7. Board: `REVIEW → TESTING → DONE`.
-8. Merge to `develop` (squash), **close the issue**.
+7. Board: move to `REVIEW`.
+8. **The owner reviews the changes and merges the PR manually** (squash).
+   The agent never merges. On merge, `Closes #<issue>` closes the issue and the
+   board moves to `DONE`.
 
 ## Deliverables per issue
 
@@ -74,7 +76,7 @@ At the end of Phase 1, we cut **release 1.0.0**:
 3. Fix anything found on the release branch (no new features).
 4. **create-pr** — PR `release/1.0.0` → `main` and → `develop`.
 5. Finalise `CHANGELOG.md`: move **Unreleased** → `1.0.0` with a date.
-6. Merge to `main`, tag `v1.0.0`, merge back to `develop`.
+6. Merge to `main` (owner merges manually), tag `v1.0.0`, merge back to `develop`.
 
 ## Changelog
 
