@@ -53,7 +53,7 @@ void main() {
 
     await pumpAndLoad(tester, buildApp(db, clock));
 
-    expect(find.text('Running'), findsNWidgets(2));
+    expect(find.textContaining('Running'), findsNWidgets(2));
     expect(find.text('01:30:00'), findsOneWidget);
   });
 
@@ -75,7 +75,7 @@ void main() {
 
     expect(find.byTooltip('Stop'), findsOneWidget);
     expect(find.byTooltip('Start'), findsNothing);
-    expect(find.text('Running'), findsNWidgets(2));
+    expect(find.textContaining('Running'), findsNWidgets(2));
 
     await tester.tap(find.byTooltip('Stop'));
     await tester.pump();
@@ -107,5 +107,36 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('00:00:01'), findsOneWidget);
+  });
+
+  testWidgets('session history shows closed session end time and duration', (
+    tester,
+  ) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final clock = FakeClock(DateTime.utc(2026, 1, 1, 14));
+    final repository = DriftWorkSessionRepository(db);
+
+    final session = await repository.start(
+      startedAtUtc: DateTime.utc(2026, 1, 1, 9),
+      localDay: 20454,
+    );
+    await repository.stop(
+      session.id,
+      endedAtUtc: DateTime.utc(2026, 1, 1, 11, 30),
+    );
+
+    await pumpAndLoad(tester, buildApp(db, clock));
+
+    final tile = find.byType(ListTile);
+    expect(tile, findsOneWidget);
+    expect(
+      find.descendant(of: tile, matching: find.text('02:30:00')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: tile, matching: find.textContaining('–')),
+      findsOneWidget,
+    );
   });
 }
