@@ -16,6 +16,16 @@ from an issue to a release.
 
 Branch names follow `feature/8-create-flutter-project` (issue number + short slug).
 
+## Branch protection
+
+A repository **ruleset** enforces the following on `main` and `develop`:
+
+- Branch **deletion is blocked** (after a PR merge the branch cannot be deleted).
+- **Direct pushes are blocked** — all changes must arrive via a pull request.
+- **Force pushes are blocked** (`non_fast_forward`).
+
+Consequence: never `git push` to `main`/`develop`; always open a PR and merge it.
+
 ## Commit convention
 
 **Conventional Commits** with the issue number so the PR links automatically:
