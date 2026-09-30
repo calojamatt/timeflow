@@ -14,11 +14,19 @@ jobs:
         working-directory: app
     steps:
       - uses: actions/checkout@v4
+      - name: Skip if Flutter app does not exist yet (Phase 0)
+        if: hashFiles('app/pubspec.yaml') == ''
+        run: exit 0
       - uses: subosito/flutter-action@v2
+        if: hashFiles('app/pubspec.yaml') != ''
         with:
           channel: stable
           flutter-version: 3.24.0
       - run: flutter pub get
+        if: hashFiles('app/pubspec.yaml') != ''
       - run: dart format --output=none --set-exit-if-changed .
+        if: hashFiles('app/pubspec.yaml') != ''
       - run: dart analyze
+        if: hashFiles('app/pubspec.yaml') != ''
       - run: flutter test
+        if: hashFiles('app/pubspec.yaml') != ''
