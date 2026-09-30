@@ -13,6 +13,11 @@ class TodayScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Today')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => ref.read(todayControllerProvider.notifier).toggle(),
+        tooltip: today.isRunning ? 'Stop' : 'Start',
+        child: Icon(today.isRunning ? Icons.stop : Icons.play_arrow),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

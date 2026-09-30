@@ -52,4 +52,32 @@ void main() {
     expect(find.text('Running'), findsNWidgets(2));
     expect(find.text('01:30:00'), findsOneWidget);
   });
+
+  testWidgets('Start/Stop button toggles and drives the use cases', (
+    tester,
+  ) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final clock = FakeClock(DateTime.utc(2026, 1, 1, 9));
+
+    await tester.pumpWidget(buildApp(db, clock));
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Start'), findsOneWidget);
+    expect(find.byTooltip('Stop'), findsNothing);
+
+    await tester.tap(find.byTooltip('Start'));
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Stop'), findsOneWidget);
+    expect(find.byTooltip('Start'), findsNothing);
+    expect(find.text('Running'), findsNWidgets(2));
+
+    await tester.tap(find.byTooltip('Stop'));
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Start'), findsOneWidget);
+    expect(find.byTooltip('Stop'), findsNothing);
+    expect(find.text('Idle'), findsOneWidget);
+  });
 }

@@ -44,4 +44,25 @@ class TodayController extends Notifier<TodayState> {
     final sessions = await repository.getByDay(day);
     state = TodayState(openSession: open, sessions: sessions, now: now);
   }
+
+  /// Starts a new work session (no-op if one is already open).
+  Future<void> start() async {
+    await ref.read(startWorkProvider).call();
+    await load();
+  }
+
+  /// Stops the open work session (no-op if none is open).
+  Future<void> stop() async {
+    await ref.read(stopWorkProvider).call();
+    await load();
+  }
+
+  /// Toggles between start and stop based on the current state.
+  Future<void> toggle() async {
+    if (state.isRunning) {
+      await stop();
+    } else {
+      await start();
+    }
+  }
 }
