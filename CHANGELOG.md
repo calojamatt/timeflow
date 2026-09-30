@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 0 blueprint: architecture overview, ADRs, deployment/sequence diagrams,
   Phase 1 scope, XP process, Definition of Done, and GitFlow delivery process.
 - Flutter project scaffold for Android and iOS (package `com.dytsas.timeflow`) (#8)
+- Core dependencies (riverpod, drift, go_router) and presentation/domain/data layer folders (#9)
 
 <!--
 Template for issue-driven entries (add under Unreleased → Added/Changed/Fixed):
