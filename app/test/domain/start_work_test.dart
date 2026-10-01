@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timeflow/data/app_database.dart';
 import 'package:timeflow/data/work_session_repository_impl.dart';
+import 'package:timeflow/domain/local_day.dart';
 import 'package:timeflow/domain/start_work.dart';
 
 import '../helpers/fake_clock.dart';
@@ -45,5 +46,17 @@ void main() {
     await startWork();
 
     await expectLater(startWork(), throwsStateError);
+  });
+
+  test('buckets the session by the start local day', () async {
+    final session = await startWork();
+
+    expect(session.localDay, localDayFrom(clock.now()));
+  });
+
+  test('passes an optional note through to the session', () async {
+    final session = await startWork(note: 'Deep focus');
+
+    expect(session.note, 'Deep focus');
   });
 }
