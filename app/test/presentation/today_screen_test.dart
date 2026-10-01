@@ -110,6 +110,47 @@ void main() {
     expect(find.text('00:00:01'), findsOneWidget);
   });
 
+  testWidgets('elapsed stays accurate when the app is backgrounded', (
+    tester,
+  ) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final clock = FakeClock(DateTime.utc(2026, 1, 1, 9));
+    final repository = DriftWorkSessionRepository(db);
+
+    await repository.start(
+      startedAtUtc: DateTime.utc(2026, 1, 1, 9),
+      localDay: 20454,
+    );
+
+    await pumpAndLoad(tester, buildApp(db, clock));
+    expect(find.text('00:00:00'), findsOneWidget);
+
+    // Lock/background the phone for 2h15m: the wall clock advances but no
+    // ticker fires. A single tick on resume must reflect the full elapsed.
+    clock.advance(const Duration(hours: 2, minutes: 15));
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('02:15:00'), findsOneWidget);
+  });
+
+  testWidgets('hides Start while a session is open', (tester) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final clock = FakeClock(DateTime.utc(2026, 1, 1, 9));
+    final repository = DriftWorkSessionRepository(db);
+
+    await repository.start(
+      startedAtUtc: DateTime.utc(2026, 1, 1, 9),
+      localDay: 20454,
+    );
+
+    await pumpAndLoad(tester, buildApp(db, clock));
+
+    expect(find.byTooltip('Stop'), findsOneWidget);
+    expect(find.byTooltip('Start'), findsNothing);
+  });
+
   testWidgets('session history shows closed session end time and duration', (
     tester,
   ) async {

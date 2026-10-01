@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session history with start–end time and duration (#20)
 - Daily total of worked time for today (#21)
 - App restart recovery: an open session resumes with correct elapsed (#22)
+- Phone-lock/background recovery: elapsed stays accurate across lock/background (#23)
+- Single-active-session enforcement: Start hidden while running, DB rejects a second open session (#24)
 
 <!--
 Template for issue-driven entries (add under Unreleased → Added/Changed/Fixed):
