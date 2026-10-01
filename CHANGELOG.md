@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Start/Stop toggle button wired to the use cases (#18)
 - Live timer that updates elapsed time every second (#19)
 - Session history with start–end time and duration (#20)
+- Daily total of worked time for today (#21)
 
 <!--
 Template for issue-driven entries (add under Unreleased → Added/Changed/Fixed):
