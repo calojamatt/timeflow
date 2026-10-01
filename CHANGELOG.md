@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phone-lock/background recovery: elapsed stays accurate across lock/background (#23)
 - Single-active-session enforcement: Start hidden while running, DB rejects a second open session (#24)
 - Unit tests for domain logic: WorkSession, use cases, and local-day bucketing (#25)
+- Integration tests for the drift repository: CRUD, open/close, and day queries (#26)
 
 <!--
 Template for issue-driven entries (add under Unreleased → Added/Changed/Fixed):

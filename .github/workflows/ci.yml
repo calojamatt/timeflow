@@ -42,3 +42,8 @@ jobs:
         if: hashFiles('app/pubspec.yaml') != ''
         working-directory: app
         run: flutter test
+
+      - name: Integration tests
+        if: hashFiles('app/pubspec.yaml') != ''
+        working-directory: app
+        run: flutter test $(find test -name '*_it.dart')
