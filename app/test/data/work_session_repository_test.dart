@@ -75,4 +75,41 @@ void main() {
       expect(sessions[1].startedAtUtc, start.add(const Duration(hours: 6)));
     },
   );
+
+  test('getByDay returns an empty list for a day with no sessions', () async {
+    expect(await repo.getByDay(20454), isEmpty);
+  });
+
+  test('start persists the optional note', () async {
+    await repo.start(startedAtUtc: start, localDay: 20454, note: 'Deep focus');
+
+    final open = await repo.findOpen();
+    expect(open!.note, 'Deep focus');
+  });
+
+  test('full lifecycle: start, read, stop, and query by day', () async {
+    final started = await repo.start(
+      startedAtUtc: start,
+      localDay: 20454,
+      note: 'Ship it',
+    );
+
+    final open = await repo.findOpen();
+    expect(open, isNotNull);
+    expect(open!.id, started.id);
+    expect(open.isOpen, isTrue);
+
+    final end = start.add(const Duration(hours: 7, minutes: 30));
+    await repo.stop(started.id, endedAtUtc: end);
+
+    expect(await repo.findOpen(), isNull);
+
+    final day = await repo.getByDay(20454);
+    expect(day, hasLength(1));
+    expect(day.single.id, started.id);
+    expect(day.single.startedAtUtc, start);
+    expect(day.single.endedAtUtc, end);
+    expect(day.single.localDay, 20454);
+    expect(day.single.note, 'Ship it');
+  });
 }
