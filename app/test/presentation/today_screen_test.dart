@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeflow/data/app_database.dart';
 import 'package:timeflow/data/work_session_repository_impl.dart';
+import 'package:timeflow/domain/local_day.dart';
 import 'package:timeflow/presentation/providers.dart';
 import 'package:timeflow/presentation/today_screen.dart';
 
@@ -138,5 +139,54 @@ void main() {
       find.descendant(of: tile, matching: find.textContaining('–')),
       findsOneWidget,
     );
+  });
+
+  testWidgets('today total equals the sum of closed sessions', (tester) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final clock = FakeClock(DateTime.utc(2026, 1, 1, 14));
+    final repository = DriftWorkSessionRepository(db);
+    final day = localDayFrom(clock.now());
+
+    final first = await repository.start(
+      startedAtUtc: DateTime.utc(2026, 1, 1, 9),
+      localDay: day,
+    );
+    await repository.stop(first.id, endedAtUtc: DateTime.utc(2026, 1, 1, 10));
+
+    final second = await repository.start(
+      startedAtUtc: DateTime.utc(2026, 1, 1, 10, 30),
+      localDay: day,
+    );
+    await repository.stop(second.id, endedAtUtc: DateTime.utc(2026, 1, 1, 12));
+
+    await pumpAndLoad(tester, buildApp(db, clock));
+
+    expect(find.text('Total today: 02:30:00'), findsOneWidget);
+  });
+
+  testWidgets('today total includes the open session elapsed time', (
+    tester,
+  ) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final clock = FakeClock(DateTime.utc(2026, 1, 1, 11));
+    final repository = DriftWorkSessionRepository(db);
+    final day = localDayFrom(clock.now());
+
+    final closed = await repository.start(
+      startedAtUtc: DateTime.utc(2026, 1, 1, 9),
+      localDay: day,
+    );
+    await repository.stop(closed.id, endedAtUtc: DateTime.utc(2026, 1, 1, 10));
+
+    await repository.start(
+      startedAtUtc: DateTime.utc(2026, 1, 1, 10, 30),
+      localDay: day,
+    );
+
+    await pumpAndLoad(tester, buildApp(db, clock));
+
+    expect(find.text('Total today: 01:30:00'), findsOneWidget);
   });
 }
