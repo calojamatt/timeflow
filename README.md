@@ -48,8 +48,8 @@ timeflow/
 |---|---|---|
 | 0 | Blueprint | ✅ Completed |
 | 1 | Work Session Engine + Today | ✅ Implemented — release candidate |
-| 2 | Planning & Calendar | 🚧 In implementation |
-| 3 | Reminders | ⬜ |
+| 2 | Planning & Calendar | ✅ Implemented — release candidate |
+| 3 | Reminders | ⏳ Next |
 | 4 | Reports & Export | ⬜ |
 | 5 | Release hardening | ⬜ |
 | 6 | Cloud sync (optional) | ⬜ |
@@ -67,4 +67,5 @@ flutter run
 ```
 
 See [docs/architecture/overview.md](docs/architecture/overview.md) for the technical design and
-[docs/implementation-roadmap.md](docs/implementation-roadmap.md) for the pending phases.
+[docs/implementation-plan.md](docs/implementation-plan.md) for the complete delivery plan and
+[docs/implementation-roadmap.md](docs/implementation-roadmap.md) for implementation detail.

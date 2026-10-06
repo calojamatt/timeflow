@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+No changes yet.
+
+## [1.1.0] - 2026-10-06
+
 ### Added
 
 - Phase 2 planning domain models, Drift schema migration, repository, and use cases.
