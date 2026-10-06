@@ -33,6 +33,11 @@ class CalendarScreen extends ConsumerWidget {
             tooltip: 'Select date',
             icon: const Icon(Icons.event),
           ),
+          IconButton(
+            onPressed: () => _createTemplate(context, ref),
+            tooltip: 'Weekly templates',
+            icon: const Icon(Icons.view_week),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -86,6 +91,22 @@ class CalendarScreen extends ConsumerWidget {
           startMinute: result.startMinute,
           endMinute: result.endMinute,
           note: result.note,
+        );
+  }
+
+  Future<void> _createTemplate(BuildContext context, WidgetRef ref) async {
+    final result = await showDialog<_TemplateDraft>(
+      context: context,
+      builder: (_) => const _TemplateDialog(),
+    );
+    if (result == null || !context.mounted) return;
+    await ref
+        .read(calendarControllerProvider.notifier)
+        .saveTemplateAndApply(
+          name: result.name,
+          weekday: result.weekday,
+          startMinute: result.startMinute,
+          endMinute: result.endMinute,
         );
   }
 }
@@ -232,6 +253,115 @@ class _BlockDialogState extends State<_BlockDialog> {
     );
   }
 }
+
+class _TemplateDraft {
+  const _TemplateDraft({
+    required this.name,
+    required this.weekday,
+    required this.startMinute,
+    required this.endMinute,
+  });
+
+  final String name;
+  final int weekday;
+  final int startMinute;
+  final int endMinute;
+}
+
+class _TemplateDialog extends StatefulWidget {
+  const _TemplateDialog();
+
+  @override
+  State<_TemplateDialog> createState() => _TemplateDialogState();
+}
+
+class _TemplateDialogState extends State<_TemplateDialog> {
+  final _name = TextEditingController();
+  final _start = TextEditingController(text: '09:00');
+  final _end = TextEditingController(text: '17:00');
+  int _weekday = DateTime.monday;
+  String? _error;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _start.dispose();
+    _end.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('Create weekly template'),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextField(
+          controller: _name,
+          decoration: const InputDecoration(labelText: 'Name'),
+        ),
+        DropdownButtonFormField<int>(
+          initialValue: _weekday,
+          decoration: const InputDecoration(labelText: 'Weekday'),
+          items: [
+            for (var day = DateTime.monday; day <= DateTime.sunday; day++)
+              DropdownMenuItem(value: day, child: Text(_weekdayName(day))),
+          ],
+          onChanged: (value) => setState(() => _weekday = value ?? _weekday),
+        ),
+        TextField(
+          controller: _start,
+          decoration: const InputDecoration(labelText: 'Start (HH:MM)'),
+        ),
+        TextField(
+          controller: _end,
+          decoration: const InputDecoration(labelText: 'End (HH:MM)'),
+        ),
+        if (_error != null)
+          Text(_error!, style: const TextStyle(color: Colors.red)),
+      ],
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: const Text('Cancel'),
+      ),
+      FilledButton(onPressed: _save, child: const Text('Save & apply')),
+    ],
+  );
+
+  void _save() {
+    final start = parseMinute(_start.text);
+    final end = parseMinute(_end.text);
+    if (_name.text.trim().isEmpty ||
+        start == null ||
+        end == null ||
+        end <= start) {
+      setState(() => _error = 'Enter a name and valid time range');
+      return;
+    }
+    Navigator.pop(
+      context,
+      _TemplateDraft(
+        name: _name.text.trim(),
+        weekday: _weekday,
+        startMinute: start,
+        endMinute: end,
+      ),
+    );
+  }
+}
+
+String _weekdayName(int weekday) => const [
+  '',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+][weekday];
 
 DateTime _dateFromDay(int localDay) =>
     DateTime(1970, 1, 1).add(Duration(days: localDay));

@@ -105,4 +105,27 @@ class CalendarController extends Notifier<CalendarState> {
     await ref.read(planningRepositoryProvider).deletePlannedBlock(id);
     await load(state.localDay);
   }
+
+  Future<void> saveTemplateAndApply({
+    required String name,
+    required int weekday,
+    required int startMinute,
+    required int endMinute,
+    String? note,
+  }) async {
+    final repository = ref.read(planningRepositoryProvider);
+    final template = await repository.createWeeklyTemplate(
+      name: name,
+      weekday: weekday,
+      startMinute: startMinute,
+      endMinute: endMinute,
+      note: note,
+    );
+    await repository.applyWeeklyTemplate(
+      templateId: template.id,
+      fromLocalDay: state.localDay,
+      toLocalDay: state.localDay + 6,
+    );
+    await load(state.localDay);
+  }
 }
