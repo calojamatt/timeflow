@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timeflow/domain/day_plan_summary.dart';
 import 'package:timeflow/domain/local_day.dart';
 import 'package:timeflow/domain/planned_block.dart';
-import 'package:timeflow/domain/work_session.dart';
 
 import 'providers.dart';
 
@@ -9,19 +9,20 @@ class CalendarState {
   const CalendarState({
     required this.localDay,
     required this.blocks,
-    required this.actual,
+    required this.summary,
     required this.loading,
   });
 
   final int localDay;
   final List<PlannedBlock> blocks;
-  final Duration actual;
+  final DayPlanSummary summary;
   final bool loading;
 
-  Duration get planned =>
-      blocks.fold(Duration.zero, (total, block) => total + block.duration);
+  Duration get planned => summary.planned;
 
-  Duration get variance => actual - planned;
+  Duration get actual => summary.actual;
+
+  Duration get variance => summary.variance;
 }
 
 final calendarControllerProvider =
@@ -35,7 +36,10 @@ class CalendarController extends Notifier<CalendarState> {
     return CalendarState(
       localDay: day,
       blocks: const [],
-      actual: Duration.zero,
+      summary: const DayPlanSummary(
+        planned: Duration.zero,
+        actual: Duration.zero,
+      ),
       loading: true,
     );
   }
@@ -44,7 +48,7 @@ class CalendarController extends Notifier<CalendarState> {
     state = CalendarState(
       localDay: localDay,
       blocks: state.blocks,
-      actual: state.actual,
+      summary: state.summary,
       loading: true,
     );
     final blocks = await ref
@@ -54,10 +58,15 @@ class CalendarController extends Notifier<CalendarState> {
         .read(workSessionRepositoryProvider)
         .getByDay(localDay);
     final now = ref.read(clockProvider).now();
+    final summary = calculateDayPlanSummary(
+      plannedBlocks: blocks,
+      sessions: sessions,
+      now: now,
+    );
     state = CalendarState(
       localDay: localDay,
       blocks: blocks,
-      actual: _total(sessions, now),
+      summary: summary,
       loading: false,
     );
   }
@@ -96,9 +105,4 @@ class CalendarController extends Notifier<CalendarState> {
     await ref.read(planningRepositoryProvider).deletePlannedBlock(id);
     await load(state.localDay);
   }
-
-  Duration _total(List<WorkSession> sessions, DateTime now) => sessions.fold(
-    Duration.zero,
-    (total, session) => total + session.elapsedAt(now),
-  );
 }
