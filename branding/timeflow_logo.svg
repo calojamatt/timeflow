@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5C6BC0"/>
+      <stop offset="55%" stop-color="#3949AB"/>
+      <stop offset="100%" stop-color="#1A237E"/>
+    </linearGradient>
+    <linearGradient id="flow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#40C4FF"/>
+      <stop offset="100%" stop-color="#7C4DFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle app-icon background -->
+  <rect x="32" y="32" width="960" height="960" rx="220" fill="url(#bg)"/>
+
+  <!-- Clock face -->
+  <circle cx="512" cy="452" r="252" fill="none" stroke="#FFFFFF" stroke-width="44" opacity="0.96"/>
+  <circle cx="512" cy="452" r="34" fill="#FFFFFF"/>
+
+  <!-- Clock hands (12:10:30-ish, hand angles suggest forward motion) -->
+  <line x1="512" y1="452" x2="512" y2="278" stroke="#FFFFFF" stroke-width="42" stroke-linecap="round"/>
+  <line x1="512" y1="452" x2="628" y2="520" stroke="#FFFFFF" stroke-width="42" stroke-linecap="round"/>
+
+  <!-- Flowing stream: time flowing forward -->
+  <path d="M176 718 C 320 622, 448 806, 608 718 S 812 632, 848 718"
+        fill="none" stroke="url(#flow)" stroke-width="46" stroke-linecap="round"/>
+</svg>
