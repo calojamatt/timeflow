@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:timeflow/domain/work_session.dart';
 
 import 'today_controller.dart';
@@ -12,7 +13,16 @@ class TodayScreen extends ConsumerWidget {
     final today = ref.watch(todayControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Today')),
+      appBar: AppBar(
+        title: const Text('Today'),
+        actions: [
+          IconButton(
+            onPressed: () => context.go('/calendar'),
+            tooltip: 'Calendar',
+            icon: const Icon(Icons.calendar_month),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => ref.read(todayControllerProvider.notifier).toggle(),
         tooltip: today.isRunning ? 'Stop' : 'Start',
