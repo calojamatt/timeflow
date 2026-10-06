@@ -9,7 +9,7 @@ void main() {
     app.main();
     await _pumpUntilVisible(tester, find.text('Idle'));
     await tester.tap(find.byTooltip('Calendar'));
-    await _pumpUntilVisible(tester, find.text('Calendar'));
+    await _pumpUntilVisible(tester, find.textContaining('Planned:'));
 
     expect(find.textContaining('Planned:'), findsOneWidget);
     expect(find.byTooltip('Add planned block'), findsOneWidget);
