@@ -18,8 +18,7 @@ void main() {
     tester,
   ) async {
     app.main();
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    await pumpUntilVisible(tester, find.text('Idle'));
 
     // Reach a clean Idle state (a previous run may have left a session open).
     if (find.byTooltip('Stop').evaluate().isNotEmpty) {
@@ -49,4 +48,12 @@ void main() {
     expect(find.byTooltip('Start'), findsOneWidget);
     expect(find.byTooltip('Stop'), findsNothing);
   });
+}
+
+Future<void> pumpUntilVisible(WidgetTester tester, Finder finder) async {
+  for (var attempt = 0; attempt < 20; attempt++) {
+    await tester.pump(const Duration(milliseconds: 250));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+  throw TestFailure('Timed out waiting for the requested UI state');
 }
