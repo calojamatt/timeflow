@@ -1,17 +1,31 @@
-# timeflow
+# TimeFlow Flutter application
 
-A new Flutter project.
+This directory contains the Flutter application for TimeFlow, a local-first
+work-time tracker for Android and iOS.
 
-## Getting Started
+## Run locally
 
-This project is a starting point for a Flutter application.
+```sh
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Verify the application
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```sh
+dart format --output=none --set-exit-if-changed .
+dart analyze
+flutter test
+flutter build apk --debug
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The on-device integration tests require a connected Android or iOS device or
+simulator:
+
+```sh
+flutter test integration_test -d <device-id>
+```
+
+The application stores work sessions locally using Drift/SQLite. The live timer
+is derived from persisted UTC timestamps, so it can recover after an app kill,
+phone lock, or device restart.

@@ -46,8 +46,8 @@ timeflow/
 
 | Phase | Name | Status |
 |---|---|---|
-| 0 | Blueprint (this repo) | ✅ In progress |
-| 1 | Work Session Engine + Today | ⏳ Next |
+| 0 | Blueprint | ✅ Completed |
+| 1 | Work Session Engine + Today | ✅ Implemented — release candidate |
 | 2 | Planning & Calendar | ⬜ |
 | 3 | Reminders | ⬜ |
 | 4 | Reports & Export | ⬜ |
@@ -58,10 +58,13 @@ timeflow/
 
 TimeFlow is built with **Extreme Programming (XP)** in short micro-iterations. See [docs/development/xp-process.md](docs/development/xp-process.md) and [docs/development/definition-of-done.md](docs/development/definition-of-done.md).
 
-## Getting started (Phase 1)
+## Getting started
 
 ```sh
-flutter create app
+cd app
+flutter pub get
+flutter run
 ```
 
-See [docs/architecture/overview.md](docs/architecture/overview.md) for the technical design.
+See [docs/architecture/overview.md](docs/architecture/overview.md) for the technical design and
+[docs/implementation-roadmap.md](docs/implementation-roadmap.md) for the pending phases.
