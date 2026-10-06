@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timeflow/presentation/today_screen.dart';
+
+import 'presentation/app_router.dart';
 
 void main() {
   runApp(const ProviderScope(child: TimeFlowApp()));
@@ -11,12 +12,12 @@ class TimeFlowApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'TimeFlow',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),
-      home: const TodayScreen(),
+      routerConfig: appRouter,
     );
   }
 }
