@@ -3,6 +3,11 @@
         android:label="timeflow"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- Impeller (OpenGLES) renders a blank surface on some emulators with
+             SwiftShader; fall back to Skia so the UI is actually visible. -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

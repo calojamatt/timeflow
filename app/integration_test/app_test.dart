@@ -10,6 +10,14 @@ void main() {
 
   testWidgets('app boots and renders', (tester) async {
     app.main();
-    await tester.pumpAndSettle();
+
+    // The controller loads today's sessions via drift on a background
+    // isolate, which pumpAndSettle does not track. Pump real frames so the
+    // initial load completes before the test tears the database down.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pump();
+
+    expect(find.text('Today'), findsOneWidget);
   });
 }
