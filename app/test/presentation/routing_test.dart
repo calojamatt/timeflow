@@ -31,6 +31,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Calendar'), findsOneWidget);
-    expect(find.text('Planning calendar coming soon'), findsOneWidget);
+    expect(find.text('No planned blocks'), findsOneWidget);
   });
 }

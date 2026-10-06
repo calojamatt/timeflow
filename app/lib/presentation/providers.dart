@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeflow/data/app_database.dart';
+import 'package:timeflow/data/planning_repository_impl.dart';
 import 'package:timeflow/data/work_session_repository_impl.dart';
 import 'package:timeflow/domain/clock.dart';
+import 'package:timeflow/domain/planning_repository.dart';
 import 'package:timeflow/domain/start_work.dart';
 import 'package:timeflow/domain/stop_work.dart';
 import 'package:timeflow/domain/work_session_repository.dart';
@@ -16,6 +18,10 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 
 final workSessionRepositoryProvider = Provider<WorkSessionRepository>((ref) {
   return DriftWorkSessionRepository(ref.watch(databaseProvider));
+});
+
+final planningRepositoryProvider = Provider<PlanningRepository>((ref) {
+  return DriftPlanningRepository(ref.watch(databaseProvider));
 });
 
 final startWorkProvider = Provider<StartWork>((ref) {
