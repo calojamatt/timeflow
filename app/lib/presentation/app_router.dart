@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 
-import 'calendar_placeholder_screen.dart';
+import 'calendar_screen.dart';
 import 'today_screen.dart';
 
 final appRouter = GoRouter(
@@ -9,7 +9,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/today', builder: (context, state) => const TodayScreen()),
     GoRoute(
       path: '/calendar',
-      builder: (context, state) => const CalendarPlaceholderScreen(),
+      builder: (context, state) => const CalendarScreen(),
     ),
   ],
 );
