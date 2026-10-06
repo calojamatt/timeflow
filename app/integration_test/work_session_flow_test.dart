@@ -31,7 +31,7 @@ void main() {
 
     // Start a session: the app flips to Running and hides Start.
     await tester.tap(find.byTooltip('Start'));
-    await tester.pump(const Duration(milliseconds: 200));
+    await pumpUntilVisible(tester, find.textContaining('Running'));
 
     expect(find.textContaining('Running'), findsWidgets);
     expect(find.byTooltip('Stop'), findsOneWidget);
@@ -42,7 +42,7 @@ void main() {
 
     // Stop the session: the app returns to Idle and shows Start again.
     await tester.tap(find.byTooltip('Stop'));
-    await tester.pump(const Duration(milliseconds: 200));
+    await pumpUntilVisible(tester, find.text('Idle'));
 
     expect(find.text('Idle'), findsOneWidget);
     expect(find.byTooltip('Start'), findsOneWidget);
