@@ -12,14 +12,20 @@ class LocalReminderNotificationService implements ReminderNotificationService {
   bool _initialized = false;
 
   @override
-  Future<void> initialize() async {
+  Future<void> initialize({void Function(String route)? onRoute}) async {
     if (_initialized) return;
     tz.initializeTimeZones();
     const settings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       iOS: DarwinInitializationSettings(),
     );
-    await _plugin.initialize(settings: settings);
+    await _plugin.initialize(
+      settings: settings,
+      onDidReceiveNotificationResponse: (response) {
+        final route = response.payload;
+        if (route != null && route.isNotEmpty) onRoute?.call(route);
+      },
+    );
     await _plugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
