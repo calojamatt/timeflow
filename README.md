@@ -11,6 +11,7 @@ Built with **Flutter** for **iOS and Android**.
 - **Planning & calendar** for planned hours, kept separate from actuals so the app can compare them.
 - **Reminders** (shift start, "you forgot to stop").
 - **Reports** with weekly/monthly summaries and per-day detail.
+- **CSV export** of actual sessions and planned blocks through the native share sheet.
 
 Everything works **offline**. Data lives on the device; cloud sync is a later, optional phase.
 

@@ -22,8 +22,17 @@ comparison and CSV export.
   Today and Calendar.
 - [x] Repository integration tests and Reports screen/widget tests.
 - [x] Daily session detail with validated historical edit/delete actions.
-- [ ] CSV export/share and
-  full Pixel 10 Pro interaction validation remain before the `v1.3.0` release.
+- [x] CSV export/share for actual and planned rows.
+- [ ] Final end-to-end Pixel 10 Pro validation and release gates remain before
+  the `v1.3.0` release.
+
+### CSV format
+
+Exports use RFC 4180-compatible UTF-8 CSV with the columns `Date`, `Type`,
+`Start`, `End`, `Duration seconds`, and `Note`. Date is the stored device-local
+day bucket; actual timestamps are rendered in the device timezone. Open
+sessions end at export time. Planned rows export their local start/end clock
+times and planned duration. The CSV uses CRLF line endings and standard quoting.
 
 ## Required tests
 

@@ -1,4 +1,5 @@
 import 'package:drift/native.dart';
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,6 +7,7 @@ import 'package:timeflow/data/app_database.dart';
 import 'package:timeflow/data/planning_repository_impl.dart';
 import 'package:timeflow/data/work_session_repository_impl.dart';
 import 'package:timeflow/domain/local_day.dart';
+import 'package:timeflow/domain/csv_share_service.dart';
 import 'package:timeflow/main.dart';
 import 'package:timeflow/presentation/providers.dart';
 import 'package:timeflow/presentation/app_router.dart';
@@ -123,4 +125,61 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('No sessions for this day'), findsOneWidget);
   });
+
+  testWidgets('exports the selected period through the share boundary', (
+    tester,
+  ) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final now = DateTime(2026, 1, 5, 12);
+    final start = DateTime(2026, 1, 5, 9).toUtc();
+    final work = DriftWorkSessionRepository(db);
+    final session = await work.start(
+      startedAtUtc: start,
+      localDay: localDayFrom(now),
+    );
+    await work.stop(session.id, endedAtUtc: DateTime(2026, 1, 5, 10).toUtc());
+    await DriftPlanningRepository(db).createPlannedBlock(
+      localDay: localDayFrom(now),
+      startMinute: 11 * 60,
+      endMinute: 12 * 60,
+    );
+    final share = _FakeCsvShareService();
+
+    appRouter.go('/today');
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          databaseProvider.overrideWithValue(db),
+          clockProvider.overrideWithValue(FakeClock(now)),
+          csvShareServiceProvider.overrideWithValue(share),
+        ],
+        child: const TimeFlowApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Reports'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Export CSV'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CSV ready to share'), findsOneWidget);
+    expect(share.fileName, 'timeflow-report-20260105-20260105.csv');
+    final rows = const CsvDecoder().convert(share.content!);
+    expect(rows.map((row) => row[1]), ['Type', 'Actual', 'Planned']);
+  });
+}
+
+class _FakeCsvShareService implements CsvShareService {
+  String? fileName;
+  String? content;
+
+  @override
+  Future<void> shareCsv({
+    required String fileName,
+    required String content,
+  }) async {
+    this.fileName = fileName;
+    this.content = content;
+  }
 }

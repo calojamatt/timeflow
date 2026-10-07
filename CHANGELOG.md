@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reports navigation from Today and Calendar, plus repository and screen tests.
 - Closed historical sessions can be edited or deleted from daily reports, with
   overlap validation and open-session protections.
+- Export daily, weekly, and monthly actual/planned report rows as CSV and share
+  them using the Android/iOS system share sheet.
 
 ## [1.2.0] - 2026-10-07
 
