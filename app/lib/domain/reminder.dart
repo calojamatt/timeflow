@@ -29,6 +29,8 @@ class Reminder {
 
 /// Boundary for Android/iOS local notification implementations.
 abstract interface class ReminderNotificationService {
+  Future<void> initialize();
+
   Future<void> schedule(Reminder reminder);
 
   Future<void> cancel(String reminderId);

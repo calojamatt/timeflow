@@ -5,6 +5,9 @@ class FakeReminderNotificationService implements ReminderNotificationService {
   final Map<String, Reminder> scheduled = {};
 
   @override
+  Future<void> initialize() async {}
+
+  @override
   Future<void> schedule(Reminder reminder) async {
     scheduled[reminder.id] = reminder;
   }
