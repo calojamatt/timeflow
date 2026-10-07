@@ -2,6 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:timeflow/data/app_database.dart';
 import 'package:timeflow/data/planning_repository_impl.dart';
+import 'package:timeflow/data/report_repository_impl.dart';
+import 'package:timeflow/domain/report_repository.dart';
+import 'package:timeflow/domain/report_summary.dart';
 import 'package:timeflow/data/local_reminder_notification_service.dart';
 import 'package:timeflow/domain/reminder.dart';
 import 'package:timeflow/domain/reminder_scheduler.dart';
@@ -27,6 +30,24 @@ final workSessionRepositoryProvider = Provider<WorkSessionRepository>((ref) {
 final planningRepositoryProvider = Provider<PlanningRepository>((ref) {
   return DriftPlanningRepository(ref.watch(databaseProvider));
 });
+
+final reportRepositoryProvider = Provider<ReportRepository>((ref) {
+  return DriftReportRepository(ref.watch(databaseProvider));
+});
+
+final reportSummaryProvider =
+    FutureProvider.family<ReportSummary, ({int fromLocalDay, int toLocalDay})>((
+      ref,
+      period,
+    ) {
+      return ref
+          .watch(reportRepositoryProvider)
+          .getSummary(
+            fromLocalDay: period.fromLocalDay,
+            toLocalDay: period.toLocalDay,
+            now: ref.watch(clockProvider).now(),
+          );
+    });
 
 final reminderNotificationServiceProvider =
     Provider<ReminderNotificationService>(

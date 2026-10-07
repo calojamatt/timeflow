@@ -14,6 +14,11 @@ void main() {
     await pumpUntilVisible(tester, find.text('Idle'));
 
     expect(find.text('Today'), findsOneWidget);
+    await tester.tap(find.byTooltip('Reports'));
+    await pumpUntilVisible(tester, find.text('Daily summary'));
+    expect(find.text('Actual'), findsOneWidget);
+    expect(find.text('Planned'), findsOneWidget);
+    expect(find.text('Variance'), findsOneWidget);
   });
 }
 

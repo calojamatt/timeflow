@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No changes yet.
+### Added
+
+- SQLite aggregation for actual sessions and planned blocks across report periods.
+- Day, week, and month Reports screen with date selection and variance totals.
+- Reports navigation from Today and Calendar, plus repository and screen tests.
 
 ## [1.2.0] - 2026-10-07
 

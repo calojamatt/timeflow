@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:timeflow/domain/planned_block.dart';
 
 import 'calendar_controller.dart';
@@ -16,6 +17,11 @@ class CalendarScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Calendar'),
         actions: [
+          IconButton(
+            onPressed: () => context.go('/reports'),
+            tooltip: 'Reports',
+            icon: const Icon(Icons.bar_chart),
+          ),
           IconButton(
             onPressed: () async {
               final selected = await showDatePicker(
