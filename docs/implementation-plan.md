@@ -45,9 +45,9 @@ Handoff to Phase 2:
 
 ## Phase 2 — Planning and Calendar
 
-Status: **implemented; release v1.1.0 in progress**
+Status: **released as v1.1.0**
 
-Delivered in the current phase:
+Delivered:
 
 - `PlannedBlock` and `WeeklyTemplate` domain models.
 - Drift schema version 2 and planning indexes.
@@ -99,6 +99,8 @@ Exit gate:
 
 ## Phase 4 — Reports and Export
 
+Status: **release candidate v1.3.0; Android validation passed**
+
 Objective: provide reliable historical summaries and portable data.
 
 Implementation order:
@@ -120,6 +122,8 @@ Exit gate:
 
 ## Phase 5 — Backup and Release Hardening
 
+Status: **planned; next implementation phase**
+
 Objective: protect user data and prepare a public-quality release.
 
 Implementation order:
@@ -140,6 +144,8 @@ Exit gate:
 - Accessibility and release checks are complete.
 
 ## Phase 6 — Optional Cloud Synchronization
+
+Status: **planned; optional after Phase 5**
 
 Objective: add multi-device sync only if local backup and product demand justify
 the operational cost.

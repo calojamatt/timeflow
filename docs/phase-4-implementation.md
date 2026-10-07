@@ -23,8 +23,10 @@ comparison and CSV export.
 - [x] Repository integration tests and Reports screen/widget tests.
 - [x] Daily session detail with validated historical edit/delete actions.
 - [x] CSV export/share for actual and planned rows.
-- [ ] Final end-to-end Pixel 10 Pro validation and release gates remain before
-  the `v1.3.0` release.
+- [x] Final end-to-end Pixel 10 Pro integration validation and Android debug
+  build passed; Phase 4 RC/release gates are in progress.
+- [ ] iOS device validation remains blocked because macOS/Xcode is unavailable
+  in the current environment.
 
 ### CSV format
 
