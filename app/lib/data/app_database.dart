@@ -41,15 +41,33 @@ class WeeklyTemplates extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('ReminderPreferencesRow')
+class ReminderPreferencesTable extends Table {
+  IntColumn get id => integer()();
+  BoolColumn get enabled => boolean()();
+  IntColumn get shiftStartLeadMinutes => integer()();
+  IntColumn get forgottenSessionAfterMinutes => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The application database.
-@DriftDatabase(tables: [WorkSessions, PlannedBlocks, WeeklyTemplates])
+@DriftDatabase(
+  tables: [
+    WorkSessions,
+    PlannedBlocks,
+    WeeklyTemplates,
+    ReminderPreferencesTable,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   DriftDatabaseOptions get options =>
@@ -66,6 +84,9 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(plannedBlocks);
         await m.createTable(weeklyTemplates);
         await _createPlanningIndexes();
+      }
+      if (from < 3) {
+        await m.createTable(reminderPreferencesTable);
       }
     },
   );
