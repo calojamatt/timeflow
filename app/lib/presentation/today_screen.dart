@@ -21,6 +21,11 @@ class TodayScreen extends ConsumerWidget {
             tooltip: 'Calendar',
             icon: const Icon(Icons.calendar_month),
           ),
+          IconButton(
+            onPressed: () => context.go('/reports'),
+            tooltip: 'Reports',
+            icon: const Icon(Icons.bar_chart),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

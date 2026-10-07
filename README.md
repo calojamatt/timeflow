@@ -50,7 +50,7 @@ timeflow/
 | 1 | Work Session Engine + Today | ✅ Implemented — release candidate |
 | 2 | Planning & Calendar | ✅ Implemented — release candidate |
 | 3 | Reminders | ✅ Implemented — release candidate |
-| 4 | Reports & Export | ⬜ |
+| 4 | Reports & Export | 🚧 In progress — summaries and Reports screen implemented |
 | 5 | Release hardening | ⬜ |
 | 6 | Cloud sync (optional) | ⬜ |
 
