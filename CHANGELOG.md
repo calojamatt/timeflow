@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 No changes yet.
 
+## [1.2.0] - 2026-10-07
+
+### Added
+
+- Reminder service boundary and fake notification implementation.
+- Persisted reminder preferences with database schema version 3.
+- Android/iOS local notification adapter with timezone-aware scheduling.
+- Planned shift reminder scheduling.
+- Forgotten open-session detection.
+- Reminder coordinator and `/today`/`/calendar` deep-link callback.
+- Desktop-safe notification initialization and test coverage.
+
 ## [1.1.0] - 2026-10-06
 
 ### Added

@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timeflow/domain/reminder.dart';
@@ -14,6 +15,12 @@ class LocalReminderNotificationService implements ReminderNotificationService {
   @override
   Future<void> initialize({void Function(String route)? onRoute}) async {
     if (_initialized) return;
+    if (kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS)) {
+      _initialized = true;
+      return;
+    }
     tz.initializeTimeZones();
     const settings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
