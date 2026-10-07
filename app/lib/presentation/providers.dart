@@ -1,6 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:timeflow/data/app_database.dart';
 import 'package:timeflow/data/planning_repository_impl.dart';
+import 'package:timeflow/data/local_reminder_notification_service.dart';
+import 'package:timeflow/domain/reminder.dart';
+import 'package:timeflow/domain/reminder_scheduler.dart';
 import 'package:timeflow/data/work_session_repository_impl.dart';
 import 'package:timeflow/domain/clock.dart';
 import 'package:timeflow/domain/planning_repository.dart';
@@ -23,6 +27,15 @@ final workSessionRepositoryProvider = Provider<WorkSessionRepository>((ref) {
 final planningRepositoryProvider = Provider<PlanningRepository>((ref) {
   return DriftPlanningRepository(ref.watch(databaseProvider));
 });
+
+final reminderNotificationServiceProvider =
+    Provider<ReminderNotificationService>(
+      (ref) =>
+          defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS
+          ? LocalReminderNotificationService()
+          : FakeReminderNotificationService(),
+    );
 
 final startWorkProvider = Provider<StartWork>((ref) {
   return StartWork(
