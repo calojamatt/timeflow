@@ -35,7 +35,16 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Reports')),
+      appBar: AppBar(
+        title: const Text('Reports'),
+        actions: [
+          IconButton(
+            tooltip: 'Export CSV',
+            onPressed: () => _exportCsv(from: from, to: to),
+            icon: const Icon(Icons.ios_share),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -123,6 +132,31 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       lastDate: DateTime(2100),
     );
     if (selected != null && mounted) setState(() => _date = selected);
+  }
+
+  Future<void> _exportCsv({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    try {
+      await ref
+          .read(exportReportCsvProvider)
+          .call(
+            fromLocalDay: localDayFrom(from),
+            toLocalDay: localDayFrom(to),
+            now: ref.read(clockProvider).now(),
+          );
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('CSV ready to share')));
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not export report: $error')),
+        );
+      }
+    }
   }
 
   (DateTime, DateTime) _bounds(DateTime date, _ReportPeriod period) {
