@@ -14,6 +14,7 @@ import 'package:timeflow/domain/planning_repository.dart';
 import 'package:timeflow/domain/start_work.dart';
 import 'package:timeflow/domain/stop_work.dart';
 import 'package:timeflow/domain/work_session_repository.dart';
+import 'package:timeflow/domain/work_session.dart';
 
 final clockProvider = Provider<Clock>((ref) => const SystemClock());
 
@@ -26,6 +27,12 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 final workSessionRepositoryProvider = Provider<WorkSessionRepository>((ref) {
   return DriftWorkSessionRepository(ref.watch(databaseProvider));
 });
+
+final workSessionHistoryProvider =
+    FutureProvider.family<List<WorkSession>, int>(
+      (ref, localDay) =>
+          ref.watch(workSessionRepositoryProvider).getByDay(localDay),
+    );
 
 final planningRepositoryProvider = Provider<PlanningRepository>((ref) {
   return DriftPlanningRepository(ref.watch(databaseProvider));

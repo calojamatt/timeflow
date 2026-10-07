@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:timeflow/domain/work_session.dart';
+import 'package:timeflow/domain/local_day.dart';
 import 'package:timeflow/domain/work_session_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -58,6 +59,78 @@ class DriftWorkSessionRepository implements WorkSessionRepository {
               ..orderBy([(t) => OrderingTerm.asc(t.startedAtUtc)]))
             .get();
     return rows.map(_fromRow).toList();
+  }
+
+  @override
+  Future<List<WorkSession>> getBetweenDays({
+    required int fromLocalDay,
+    required int toLocalDay,
+  }) async {
+    if (toLocalDay < fromLocalDay) {
+      throw ArgumentError.value(toLocalDay, 'toLocalDay');
+    }
+    final rows =
+        await (_db.select(_db.workSessions)
+              ..where(
+                (t) => t.localDay.isBetweenValues(fromLocalDay, toLocalDay),
+              )
+              ..orderBy([(t) => OrderingTerm.asc(t.startedAtUtc)]))
+            .get();
+    return rows.map(_fromRow).toList();
+  }
+
+  @override
+  Future<WorkSession> updateHistorical(WorkSession session) async {
+    final end = session.endedAtUtc;
+    if (end == null) throw ArgumentError('An open session cannot be edited');
+    if (!end.isAfter(session.startedAtUtc)) {
+      throw ArgumentError('Session end must be after its start');
+    }
+    if (session.localDay != localDayFrom(session.startedAtUtc)) {
+      throw ArgumentError('Session local day must match its start time');
+    }
+
+    return _db.transaction(() async {
+      final existing = await _byId(session.id);
+      if (existing == null) {
+        throw StateError('No work session with id "${session.id}"');
+      }
+      if (existing.isOpen) throw StateError('An open session cannot be edited');
+      final others = await (_db.select(
+        _db.workSessions,
+      )..where((t) => t.id.isNotValue(session.id))).get();
+      for (final row in others) {
+        final other = _fromRow(row);
+        final overlaps =
+            (other.endedAtUtc == null ||
+                session.startedAtUtc.isBefore(other.endedAtUtc!)) &&
+            other.startedAtUtc.isBefore(end);
+        if (overlaps) {
+          throw StateError('Historical sessions cannot overlap');
+        }
+      }
+      await (_db.update(
+        _db.workSessions,
+      )..where((t) => t.id.equals(session.id))).write(
+        WorkSessionsCompanion(
+          startedAtUtc: Value(session.startedAtUtc),
+          endedAtUtc: Value(end),
+          localDay: Value(session.localDay),
+          note: Value(session.note),
+        ),
+      );
+      return session;
+    });
+  }
+
+  @override
+  Future<void> deleteHistorical(String id) async {
+    await _db.transaction(() async {
+      final session = await _byId(id);
+      if (session == null) throw StateError('No work session with id "$id"');
+      if (session.isOpen) throw StateError('An open session cannot be deleted');
+      await (_db.delete(_db.workSessions)..where((t) => t.id.equals(id))).go();
+    });
   }
 
   Future<WorkSession?> _byId(String id) async {

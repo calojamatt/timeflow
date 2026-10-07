@@ -19,4 +19,16 @@ abstract interface class WorkSessionRepository {
 
   /// Returns all sessions belonging to [localDay], ordered by start time.
   Future<List<WorkSession>> getByDay(int localDay);
+
+  /// Returns sessions in an inclusive local-day range, ordered chronologically.
+  Future<List<WorkSession>> getBetweenDays({
+    required int fromLocalDay,
+    required int toLocalDay,
+  });
+
+  /// Updates a closed historical session after validating time and overlap.
+  Future<WorkSession> updateHistorical(WorkSession session);
+
+  /// Deletes a closed historical session.
+  Future<void> deleteHistorical(String id);
 }

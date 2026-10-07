@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeflow/domain/local_day.dart';
 
 import 'providers.dart';
+import 'history_sessions_section.dart';
 
 enum _ReportPeriod { day, week, month }
 
@@ -65,32 +66,42 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           report.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Text('Could not load report: $error'),
-            data: (summary) => Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _periodTitle,
-                      style: Theme.of(context).textTheme.titleLarge,
+            data: (summary) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _periodTitle,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 12),
+                        _Metric(
+                          label: 'Actual',
+                          value: _formatDuration(summary.actual),
+                        ),
+                        _Metric(
+                          label: 'Planned',
+                          value: _formatDuration(summary.planned),
+                        ),
+                        _Metric(
+                          label: 'Variance',
+                          value: _formatDuration(
+                            summary.variance,
+                            signed: true,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    _Metric(
-                      label: 'Actual',
-                      value: _formatDuration(summary.actual),
-                    ),
-                    _Metric(
-                      label: 'Planned',
-                      value: _formatDuration(summary.planned),
-                    ),
-                    _Metric(
-                      label: 'Variance',
-                      value: _formatDuration(summary.variance, signed: true),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                if (_period == _ReportPeriod.day)
+                  HistorySessionsSection(localDay: localDayFrom(from)),
+              ],
             ),
           ),
         ],

@@ -46,7 +46,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Daily summary'), findsOneWidget);
-    expect(find.text('2h 0m'), findsOneWidget);
+    expect(find.byKey(const Key('report-Actual')), findsOneWidget);
+    expect(find.byKey(const Key('report-Planned')), findsOneWidget);
+    expect(find.byKey(const Key('report-Variance')), findsOneWidget);
+    expect(find.text('2h 0m'), findsNWidgets(2));
     expect(find.text('8h 0m'), findsOneWidget);
     expect(find.text('-6h 0m'), findsOneWidget);
   });
@@ -76,5 +79,48 @@ void main() {
 
     expect(find.text('Weekly summary'), findsOneWidget);
     expect(find.text('2026-01-05 – 2026-01-11'), findsOneWidget);
+  });
+
+  testWidgets('edits and deletes a closed historical session', (tester) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final now = DateTime(2026, 1, 5, 12);
+    final start = DateTime(2026, 1, 5, 9).toUtc();
+    final work = DriftWorkSessionRepository(db);
+    final session = await work.start(
+      startedAtUtc: start,
+      localDay: localDayFrom(now),
+    );
+    await work.stop(session.id, endedAtUtc: DateTime(2026, 1, 5, 10).toUtc());
+
+    appRouter.go('/today');
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          databaseProvider.overrideWithValue(db),
+          clockProvider.overrideWithValue(FakeClock(now)),
+        ],
+        child: const TimeFlowApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Reports'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Session actions'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Edit session'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Updated note');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Updated note'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Session actions'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete session'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete').last);
+    await tester.pumpAndSettle();
+    expect(find.text('No sessions for this day'), findsOneWidget);
   });
 }
