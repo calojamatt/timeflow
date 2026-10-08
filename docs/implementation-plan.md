@@ -124,7 +124,7 @@ Exit gate:
 
 ## Phase 5 — Backup and Release Hardening
 
-Status: **release candidate v1.4.0-rc.1; code complete, store signing/device gates documented**
+Status: **source released as v1.4.0; signed distribution/device gates remain external**
 
 Objective: protect user data and prepare a public-quality release.
 
