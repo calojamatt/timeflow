@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Versioned JSON backups with schema 1–3 compatibility handling, validation,
   transactional restore, and native file share/picker UI.
+- A confirmation-gated clear-data control removes sessions, plans, templates,
+  reminder preferences, and scheduled local notifications.
 
 ## [1.3.0] - 2026-10-08
 

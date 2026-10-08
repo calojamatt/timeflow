@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timeflow/data/app_database.dart';
+import 'package:timeflow/data/planning_repository_impl.dart';
+import 'package:timeflow/data/reminder_preferences_repository_impl.dart';
 import 'package:timeflow/data/work_session_repository_impl.dart';
 import 'package:timeflow/domain/backup_document.dart';
 import 'package:timeflow/domain/backup_file_service.dart';
 import 'package:timeflow/domain/local_day.dart';
+import 'package:timeflow/domain/reminder_preferences.dart';
+import 'package:timeflow/domain/reminder_scheduler.dart';
 import 'package:timeflow/main.dart';
 import 'package:timeflow/presentation/app_router.dart';
 import 'package:timeflow/presentation/providers.dart';
@@ -88,6 +92,56 @@ void main() {
     expect(restored, hasLength(1));
     expect(restored.single.id, 'restored-session');
   });
+
+  testWidgets(
+    'clear-data action requires confirmation and deletes every table',
+    (tester) async {
+      final db = AppDatabase.forTesting(NativeDatabase.memory());
+      addTearDown(db.close);
+      final now = DateTime.utc(2026, 10, 8, 12);
+      final day = localDayFrom(now);
+      await DriftWorkSessionRepository(db).start(
+        startedAtUtc: now.subtract(const Duration(hours: 2)),
+        localDay: day,
+      );
+      final planning = DriftPlanningRepository(db);
+      await planning.createPlannedBlock(
+        localDay: day,
+        startMinute: 540,
+        endMinute: 600,
+      );
+      await planning.createWeeklyTemplate(
+        name: 'Schedule',
+        weekday: DateTime.thursday,
+        startMinute: 540,
+        endMinute: 600,
+      );
+      await DriftReminderPreferencesRepository(db)
+          .save(ReminderPreferences(enabled: false));
+      await _openBackup(tester, db, now, _FakeBackupFileService());
+
+      await tester.tap(find.byKey(const Key('delete-local-data')));
+      await tester.pumpAndSettle();
+      expect(find.text('Delete all local data?'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(
+        (await DriftWorkSessionRepository(db).getByDay(day)),
+        hasLength(1),
+      );
+
+      await tester.tap(find.byKey(const Key('delete-local-data')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete permanently'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('All local TimeFlow data deleted'), findsOneWidget);
+      expect(await (db.select(db.workSessions)).get(), isEmpty);
+      expect(await (db.select(db.plannedBlocks)).get(), isEmpty);
+      expect(await (db.select(db.weeklyTemplates)).get(), isEmpty);
+      expect(await (db.select(db.reminderPreferencesTable)).get(), isEmpty);
+    },
+  );
 }
 
 Future<void> _openBackup(
@@ -103,6 +157,9 @@ Future<void> _openBackup(
         databaseProvider.overrideWithValue(db),
         clockProvider.overrideWithValue(FakeClock(now)),
         backupFileServiceProvider.overrideWithValue(files),
+        reminderNotificationServiceProvider.overrideWithValue(
+          FakeReminderNotificationService(),
+        ),
       ],
       child: const TimeFlowApp(),
     ),

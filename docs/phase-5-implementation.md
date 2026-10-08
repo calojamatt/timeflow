@@ -28,10 +28,14 @@ Protect local user data and prepare TimeFlow for public distribution.
 - [x] Add native share and JSON file picker UI; restoration requires explicit
   replace confirmation.
 - [x] Add domain, repository, rollback, migration, and Backup screen tests.
+- [x] Add a confirmation-gated all-local-data deletion flow and cancel scheduled
+  notifications when the user clears app data.
+- [x] Full Flutter suite now passes 100 tests; analyzer and Android debug APK
+  build pass after the privacy slice.
 - [x] Pixel 10 Pro integration smoke test reached Backup & Restore and Reports;
   the AVD disconnected/crashed during teardown in the broader local integration
   run, so CI/device rerun remains part of the review gate.
-- [ ] Accessibility/privacy controls, clear-data flow, broader device/release
+- [ ] Accessibility review, broader device/release
   hardening, and final `v1.4.0` gates remain.
 
 ### Backup compatibility policy
