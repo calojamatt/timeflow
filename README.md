@@ -11,6 +11,7 @@ Built with **Flutter** for **iOS and Android**.
 - **Planning & calendar** for planned hours, kept separate from actuals so the app can compare them.
 - **Reminders** (shift start, "you forgot to stop").
 - **Reports** with weekly/monthly summaries and per-day detail.
+- **CSV export** of actual sessions and planned blocks through the native share sheet.
 
 Everything works **offline**. Data lives on the device; cloud sync is a later, optional phase.
 
@@ -47,10 +48,10 @@ timeflow/
 | Phase | Name | Status |
 |---|---|---|
 | 0 | Blueprint | ✅ Completed |
-| 1 | Work Session Engine + Today | ✅ Implemented — release candidate |
-| 2 | Planning & Calendar | ✅ Implemented — release candidate |
-| 3 | Reminders | ✅ Implemented — release candidate |
-| 4 | Reports & Export | ⬜ |
+| 1 | Work Session Engine + Today | ✅ Released — `v1.0.0` |
+| 2 | Planning & Calendar | ✅ Released — `v1.1.0` |
+| 3 | Reminders | ✅ Released — `v1.2.0` |
+| 4 | Reports & Export | ✅ Release candidate — `v1.3.0` |
 | 5 | Release hardening | ⬜ |
 | 6 | Cloud sync (optional) | ⬜ |
 

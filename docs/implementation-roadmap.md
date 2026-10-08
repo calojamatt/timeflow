@@ -5,6 +5,22 @@ This document reconciles the original product conversation in
 working plan for finishing the current release and implementing the pending
 product phases.
 
+## Current status — 2026-10-07
+
+| Phase | Release | Status |
+|---|---|---|
+| 1 — Work sessions and Today | `v1.0.0` | Released |
+| 2 — Planning and Calendar | `v1.1.0` | Released |
+| 3 — Reminders and notifications | `v1.2.0` | Released |
+| 4 — Reports and export | `v1.3.0-rc.1` | Release candidate; final release PRs in progress |
+| 5 — Backup and release hardening | `v1.4.0` | Next implementation phase |
+| 6 — Optional cloud synchronization | `v2.0.0` | Deferred until Phase 5 is complete |
+
+Current Phase 4 validation: 89 Flutter tests, `dart analyze`, Android debug
+build, and all integration tests on the Pixel 10 Pro AVD passed. iOS validation
+is blocked on macOS/Xcode availability. See [Phase 4 details](phase-4-implementation.md)
+and [the implementation plan](implementation-plan.md).
+
 ## 1. Current product direction
 
 TimeFlow is a local-first, offline-capable mobile application for recording
@@ -112,62 +128,18 @@ The original Phase 1 issues `#3` through `#28` are closed, and PRs `#29`
 through `#49` are merged. PR `#31` was superseded by the SonarQube work in PR
 `#49`.
 
-## 3. Phase 1 — Finish and release the current slice
+## 3. Phase 1 — Work Session Engine (released)
 
 ### Current status
 
-The Phase 1 functionality is implemented, but release closure is still
-pending. The current branch also contains the app logo work in PR `#51`.
-PR `#50` contains an Android emulator rendering fix and a smoke-test fix.
+Phase 1 is released as `v1.0.0`. The original PRs and implementation tasks are
+historical; they are not pending work.
 
-### Remaining implementation work
+### Delivered scope
 
-#### 1. Merge and integrate pending PRs
-
-- Review and merge PR `#50`.
-- Review and merge PR `#51`.
-- Rebase the working branch on the updated `develop` branch.
-- Confirm CI, formatting, analysis, tests, and Android build.
-
-#### 2. Complete device validation
-
-Android validation must cover:
-
-- App startup.
-- Start and stop.
-- Live timer progression.
-- Background and phone-lock recovery.
-- App kill and relaunch recovery.
-- Database persistence.
-- Rendering on the supported emulator/device configuration.
-
-iOS validation requires macOS and Xcode because it cannot be completed on the
-current Fedora/Linux development machine. It must cover the same behavior on an
-iOS simulator or physical device.
-
-#### 3. Harden the user flow
-
-Add:
-
-- Initial loading state while the database is queried.
-- Disabled Start/Stop control while an operation is running.
-- Duplicate-tap protection.
-- User-visible error messages for failed operations.
-- Recovery behavior for database errors.
-- Tests for sessions crossing midnight.
-- Tests for an invalid/backward system-clock change.
-- Database migration test coverage.
-
-#### 4. Release preparation
-
-- Replace the default Flutter text in `app/README.md`.
-- Update the root README phase status.
-- Update the changelog for the release.
-- Create `release/1.0.0`.
-- Run the complete release validation suite.
-- Tag `v1.0.0`.
-- Build and verify the Android release artifact.
-- Produce the iOS archive from macOS.
+Delivered: UTC-persisted work sessions with local-day bucketing, offline Drift
+storage, crash-safe derived timers, Today history/totals, single-open-session
+enforcement, Android/iOS scaffolding, automated tests, and Android device flows.
 
 ### Phase 1 acceptance criteria
 
@@ -179,7 +151,10 @@ Add:
 - iOS validation passes on a simulator or real device.
 - The release documentation and artifacts are complete.
 
-## 4. Phase 2 — Planning and calendar
+## 4. Phase 2 — Planning and calendar (released)
+
+Status: released as `v1.1.0`; planned blocks, weekly templates, Calendar CRUD,
+and planned-versus-actual daily summaries are implemented and tested.
 
 ### Objective
 
@@ -252,7 +227,11 @@ Implement:
 - Daily variance is calculated correctly.
 - Existing Phase 1 data remains readable after migration.
 
-## 5. Phase 3 — Reminders and notifications
+## 5. Phase 3 — Reminders and notifications (released)
+
+Status: released as `v1.2.0`; reminder preferences, local notifications,
+planned-shift scheduling, forgotten-session detection, and deep links are
+implemented. iOS device validation remains unavailable on this Linux host.
 
 ### Objective
 
@@ -307,7 +286,10 @@ Notification taps should deep-link to the appropriate screen, normally
 - Stopping a session cancels any relevant forgotten-session reminder.
 - Tapping a notification opens the correct screen.
 
-## 6. Phase 4 — Reports and export
+## 6. Phase 4 — Reports and export (release candidate)
+
+Status: `v1.3.0-rc.1`; implementation and Android validation are complete. The
+final `v1.3.0` release PRs/tag are the remaining gate.
 
 ### Objective
 
@@ -365,7 +347,7 @@ PDF export can follow if it remains a confirmed product requirement.
 - Exported CSV data can be opened by spreadsheet software.
 - Historical edits preserve database invariants.
 
-## 7. Phase 5 — Backup and release hardening
+## 7. Phase 5 — Backup and release hardening (next)
 
 ### Objective
 
@@ -388,7 +370,7 @@ Protect user data and prepare the app for a broader public release.
 Backup and restore must be tested across schema versions and should not depend
 on cloud sync.
 
-## 8. Phase 6 — Optional cloud synchronization
+## 8. Phase 6 — Optional cloud synchronization (deferred)
 
 Cloud sync is intentionally deferred until local persistence, backup, and
 reports are stable.
@@ -411,15 +393,12 @@ explicitly changes that rule.
 
 ## 9. Recommended delivery order
 
-1. Merge PRs `#50` and `#51`.
-2. Finish Phase 1 hardening and device validation.
-3. Release `v1.0.0`.
-4. Create and implement Phase 2 issues.
-5. Implement planned hours and calendar.
-6. Implement reminders and deep links.
-7. Implement reports and CSV export.
-8. Implement local backup/restore and release hardening.
-9. Re-evaluate whether cloud synchronization is necessary.
+1. Complete Phase 4 release PRs and publish `v1.3.0`.
+2. Create the Phase 5 GitHub project/issues and implement backup, restore,
+   deletion/privacy, accessibility, and release hardening.
+3. Release Phase 5 as `v1.4.0`.
+4. Re-evaluate Phase 6 cloud sync before creating a backend or storing user data
+   remotely; retain local-first behavior if sync is not justified.
 
 Each phase should follow the existing XP workflow:
 

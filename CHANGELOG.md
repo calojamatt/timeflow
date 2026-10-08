@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 No changes yet.
 
+## [1.3.0] - 2026-10-07
+
+### Added
+
+- SQLite aggregation for actual sessions and planned blocks across report periods.
+- Day, week, and month Reports screen with date selection and variance totals.
+- Reports navigation from Today and Calendar, plus repository and screen tests.
+- Closed historical sessions can be edited or deleted from daily reports, with
+  overlap validation and open-session protections.
+- Export daily, weekly, and monthly actual/planned report rows as CSV and share
+  them using the Android/iOS system share sheet.
+
 ## [1.2.0] - 2026-10-07
 
 ### Added

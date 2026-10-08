@@ -14,6 +14,28 @@ comparison and CSV export.
 5. CSV export and share flow.
 6. Report, edit, export, and device tests.
 
+## Progress (2026-10-07)
+
+- [x] Period-based SQLite aggregation for actual and planned time, including
+  open-session elapsed time and invalid-range validation.
+- [x] Daily, weekly, and monthly period selection and report navigation from
+  Today and Calendar.
+- [x] Repository integration tests and Reports screen/widget tests.
+- [x] Daily session detail with validated historical edit/delete actions.
+- [x] CSV export/share for actual and planned rows.
+- [x] Final end-to-end Pixel 10 Pro integration validation and Android debug
+  build passed; Phase 4 RC/release gates are in progress.
+- [ ] iOS device validation remains blocked because macOS/Xcode is unavailable
+  in the current environment.
+
+### CSV format
+
+Exports use RFC 4180-compatible UTF-8 CSV with the columns `Date`, `Type`,
+`Start`, `End`, `Duration seconds`, and `Note`. Date is the stored device-local
+day bucket; actual timestamps are rendered in the device timezone. Open
+sessions end at export time. Planned rows export their local start/end clock
+times and planned duration. The CSV uses CRLF line endings and standard quoting.
+
 ## Required tests
 
 - Aggregation integration tests.
