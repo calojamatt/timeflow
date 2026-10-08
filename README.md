@@ -13,6 +13,7 @@ Built with **Flutter** for **iOS and Android**.
 - **Reports** with weekly/monthly summaries and per-day detail.
 - **CSV export** of actual sessions and planned blocks through the native share sheet.
 - **Backup & restore** for local sessions, plans, templates, and reminder preferences.
+- **Privacy controls** to clear all locally stored app data.
 
 Everything works **offline**. Data lives on the device; cloud sync is a later, optional phase.
 
