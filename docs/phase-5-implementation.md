@@ -1,8 +1,9 @@
 # Phase 5 — Backup and Release Hardening
 
-Status: **release candidate `v1.4.0-rc.1`** — Phase 4 release `v1.3.0` is
-complete. Source code/repository gates pass; signed production store artifacts
-remain gated on owner credentials and platform validation. Phase 5 board:
+Status: **source released as `v1.4.0`** (`v1.4.0-rc.1` was the RC) — Phase 4
+release `v1.3.0` is complete. Code/repository gates pass; signed production
+store artifacts remain gated on owner credentials and platform validation.
+Phase 5 board:
 [Project #7](https://github.com/users/calojamatt/projects/7); issues #100–#105.
 
 ## Goal
@@ -42,8 +43,8 @@ Protect local user data and prepare TimeFlow for public distribution.
   require a private maintainer keystore for Android release packaging.
 - [x] Verify an unsigned release build is blocked with an actionable signing
   error instead of silently producing a debug-signed release.
-- [x] Prepare Phase 5 RC metadata and `1.4.0+5` app version; create release PRs
-  and RC tag.
+- [x] Prepare `1.4.0+5` app version, create release PRs #109/#110, RC tag
+  `v1.4.0-rc.1`, production source tag `v1.4.0`, and GitHub release.
 - [x] Pixel 10 Pro integration smoke test reached Backup & Restore and Reports;
   the AVD disconnected/crashed during teardown in the broader local integration
   run, so CI/device rerun remains part of the review gate.
@@ -55,6 +56,11 @@ The Android release build was intentionally tested without a keystore and is
 blocked with the expected actionable signing configuration message. Debug APK
 builds do not need these secrets. A production upload key must be supplied by
 the release owner; it is not generated or committed by this implementation.
+
+The GitHub release is a source release and contains no signed production APK or
+AAB. Issue #104 remains open for the release owner's signing credentials,
+signed-artifact verification, and iOS/macOS device validation. Phase 6 remains
+optional/deferred until sync requirements and security decisions are approved.
 
 ### Backup compatibility policy
 
