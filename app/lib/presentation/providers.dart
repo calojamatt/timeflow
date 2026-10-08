@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:timeflow/data/app_database.dart';
+import 'package:timeflow/data/drift_backup_repository.dart';
+import 'package:timeflow/data/drift_local_data_maintenance_repository.dart';
+import 'package:timeflow/data/native_backup_file_service.dart';
 import 'package:timeflow/data/planning_repository_impl.dart';
 import 'package:timeflow/data/report_repository_impl.dart';
 import 'package:timeflow/data/share_plus_csv_service.dart';
@@ -8,6 +11,9 @@ import 'package:timeflow/domain/csv_share_service.dart';
 import 'package:timeflow/domain/export_report_csv.dart';
 import 'package:timeflow/domain/report_repository.dart';
 import 'package:timeflow/domain/report_summary.dart';
+import 'package:timeflow/domain/backup_file_service.dart';
+import 'package:timeflow/domain/backup_repository.dart';
+import 'package:timeflow/domain/local_data_maintenance_repository.dart';
 import 'package:timeflow/data/local_reminder_notification_service.dart';
 import 'package:timeflow/domain/reminder.dart';
 import 'package:timeflow/domain/reminder_scheduler.dart';
@@ -26,6 +32,19 @@ final databaseProvider = Provider<AppDatabase>((ref) {
   ref.onDispose(() => db.close());
   return db;
 });
+
+final backupRepositoryProvider = Provider<BackupRepository>(
+  (ref) => DriftBackupRepository(ref.watch(databaseProvider)),
+);
+
+final backupFileServiceProvider = Provider<BackupFileService>(
+  (ref) => NativeBackupFileService(),
+);
+
+final localDataMaintenanceRepositoryProvider =
+    Provider<LocalDataMaintenanceRepository>(
+      (ref) => DriftLocalDataMaintenanceRepository(ref.watch(databaseProvider)),
+    );
 
 final workSessionRepositoryProvider = Provider<WorkSessionRepository>((ref) {
   return DriftWorkSessionRepository(ref.watch(databaseProvider));

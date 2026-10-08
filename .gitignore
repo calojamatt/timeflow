@@ -1,3 +1,6 @@
 # IDE
 .vscode/
 .idea/
+app/android/key.properties
+app/android/*.jks
+app/android/*.keystore

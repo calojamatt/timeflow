@@ -2,7 +2,7 @@
 
 TimeFlow is a **local-first, cross-platform mobile app** to register your working time: clock in, clock out, and review your worked hours per day, week, and month — with planned-vs-actual comparison and reminders.
 
-Built with **Flutter** for **iOS and Android**.
+Built with **Flutter** for **iOS and Android**, with English and Spanish UI.
 
 ## What it does
 
@@ -12,8 +12,12 @@ Built with **Flutter** for **iOS and Android**.
 - **Reminders** (shift start, "you forgot to stop").
 - **Reports** with weekly/monthly summaries and per-day detail.
 - **CSV export** of actual sessions and planned blocks through the native share sheet.
+- **Backup & restore** for local sessions, plans, templates, and reminder preferences.
+- **Privacy controls** to clear all locally stored app data.
 
 Everything works **offline**. Data lives on the device; cloud sync is a later, optional phase.
+See [the privacy summary](docs/privacy-policy.md) for local storage, sharing,
+and deletion behavior.
 
 ## Core principles
 
@@ -33,6 +37,8 @@ timeflow/
 │   │   ├── overview.md
 │   │   ├── decisions.md
 │   │   └── diagrams/architecture.mmd
+│   ├── privacy-policy.md
+│   ├── android-release-signing.md
 │   ├── product/phase-1-scope.md
 │   └── development/
 │       ├── xp-process.md
@@ -40,7 +46,7 @@ timeflow/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
 │   └── workflows/
-└── app/            # Flutter project — added after Phase 0 design is approved
+└── app/            # Flutter app, localizations, and tests
 ```
 
 ## Phases
@@ -51,8 +57,8 @@ timeflow/
 | 1 | Work Session Engine + Today | ✅ Released — `v1.0.0` |
 | 2 | Planning & Calendar | ✅ Released — `v1.1.0` |
 | 3 | Reminders | ✅ Released — `v1.2.0` |
-| 4 | Reports & Export | ✅ Release candidate — `v1.3.0` |
-| 5 | Release hardening | ⬜ |
+| 4 | Reports & Export | ✅ Released — `v1.3.0` |
+| 5 | Backup & release hardening | ✅ Release candidate — `v1.4.0-rc.1`; signed store artifacts gated on owner credentials |
 | 6 | Cloud sync (optional) | ⬜ |
 
 ## Development process
