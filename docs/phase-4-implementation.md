@@ -1,5 +1,8 @@
 # Phase 4 — Reports and Export
 
+Status: **released as `v1.3.0` on 2026-10-08**. Release PRs #98/#99 were
+merged with regular merge commits; `v1.3.0-rc.1` and `v1.3.0` tags exist.
+
 ## Goal
 
 Provide daily, weekly, and monthly summaries with planned-versus-actual
@@ -24,7 +27,7 @@ comparison and CSV export.
 - [x] Daily session detail with validated historical edit/delete actions.
 - [x] CSV export/share for actual and planned rows.
 - [x] Final end-to-end Pixel 10 Pro integration validation and Android debug
-  build passed; Phase 4 RC/release gates are in progress.
+  build passed; `v1.3.0` is released.
 - [ ] iOS device validation remains blocked because macOS/Xcode is unavailable
   in the current environment.
 

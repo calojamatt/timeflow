@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 
 import 'calendar_screen.dart';
+import 'backup_screen.dart';
 import 'reports_screen.dart';
 import 'today_screen.dart';
 
@@ -16,5 +17,6 @@ final appRouter = GoRouter(
       path: '/reports',
       builder: (context, state) => const ReportsScreen(),
     ),
+    GoRoute(path: '/backup', builder: (context, state) => const BackupScreen()),
   ],
 );

@@ -12,6 +12,7 @@ Built with **Flutter** for **iOS and Android**.
 - **Reminders** (shift start, "you forgot to stop").
 - **Reports** with weekly/monthly summaries and per-day detail.
 - **CSV export** of actual sessions and planned blocks through the native share sheet.
+- **Backup & restore** for local sessions, plans, templates, and reminder preferences.
 
 Everything works **offline**. Data lives on the device; cloud sync is a later, optional phase.
 
@@ -51,8 +52,8 @@ timeflow/
 | 1 | Work Session Engine + Today | ✅ Released — `v1.0.0` |
 | 2 | Planning & Calendar | ✅ Released — `v1.1.0` |
 | 3 | Reminders | ✅ Released — `v1.2.0` |
-| 4 | Reports & Export | ✅ Release candidate — `v1.3.0` |
-| 5 | Release hardening | ⬜ |
+| 4 | Reports & Export | ✅ Released — `v1.3.0` |
+| 5 | Backup & release hardening | 🚧 In progress — versioned backup/restore |
 | 6 | Cloud sync (optional) | ⬜ |
 
 ## Development process
