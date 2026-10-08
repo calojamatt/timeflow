@@ -17,10 +17,12 @@ product phases.
 | 6 — Optional cloud synchronization | `v2.0.0` | Deferred until Phase 5 is complete |
 
 Phase 4 shipped after 89 Flutter tests, analyzer, Android debug build, and Pixel
-10 Pro integration tests passed. Phase 5 currently has versioned backup/restore
-with schema 1–3 import compatibility, transactional replacement, and tests. iOS
-validation is blocked on macOS/Xcode availability. See the [phase details](phase-5-implementation.md)
-and [implementation plan](implementation-plan.md).
+10 Pro integration tests passed. Phase 5 has versioned backup/restore (schema
+1–3), transactional replacement, privacy deletion, bilingual UI, and release
+safeguards. The Pixel 10 Pro app, session, and Calendar interaction suites have
+now passed when run individually. iOS validation is blocked on macOS/Xcode;
+signed Android distribution waits for owner keystore material. See the [phase
+details](phase-5-implementation.md) and [implementation plan](implementation-plan.md).
 
 ## 1. Current product direction
 

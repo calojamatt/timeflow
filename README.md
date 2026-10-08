@@ -59,7 +59,7 @@ timeflow/
 | 3 | Reminders | ✅ Released — `v1.2.0` |
 | 4 | Reports & Export | ✅ Released — `v1.3.0` |
 | 5 | Backup & release hardening | ✅ Source released — `v1.4.0`; signed store artifacts gated on owner credentials |
-| 6 | Cloud sync (optional) | ⬜ |
+| 6 | Cloud sync (optional) | ⏸ Deferred pending approved sync/security requirements |
 
 ## Development process
 
