@@ -101,8 +101,14 @@ abstract class AppLocalizations {
   /// No description provided for @todayTitle.
   ///
   /// In en, this message translates to:
-  /// **'Today'**
+  /// **'Time Clock'**
   String get todayTitle;
+
+  /// No description provided for @navTimeClock.
+  ///
+  /// In en, this message translates to:
+  /// **'Clock'**
+  String get navTimeClock;
 
   /// No description provided for @calendarTitle.
   ///
@@ -137,8 +143,14 @@ abstract class AppLocalizations {
   /// No description provided for @navBackup.
   ///
   /// In en, this message translates to:
-  /// **'Backup & Restore'**
+  /// **'Backup'**
   String get navBackup;
+
+  /// No description provided for @changeCalendarDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Change day'**
+  String get changeCalendarDay;
 
   /// No description provided for @startWork.
   ///

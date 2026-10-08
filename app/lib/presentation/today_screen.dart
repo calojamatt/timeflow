@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:timeflow/domain/work_session.dart';
 import 'package:timeflow/l10n/app_localizations.dart';
 
@@ -15,26 +14,7 @@ class TodayScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.todayTitle),
-        actions: [
-          IconButton(
-            onPressed: () => context.go('/calendar'),
-            tooltip: l10n.navCalendar,
-            icon: const Icon(Icons.calendar_month),
-          ),
-          IconButton(
-            onPressed: () => context.go('/reports'),
-            tooltip: l10n.navReports,
-            icon: const Icon(Icons.bar_chart),
-          ),
-          IconButton(
-            onPressed: () => context.push('/backup'),
-            tooltip: l10n.navBackup,
-            icon: const Icon(Icons.backup),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(l10n.todayTitle)),
       floatingActionButton: FloatingActionButton(
         onPressed: () => ref.read(todayControllerProvider.notifier).toggle(),
         tooltip: today.isRunning ? l10n.stopWork : l10n.startWork,

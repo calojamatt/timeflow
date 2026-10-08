@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:timeflow/domain/planned_block.dart';
 import 'package:timeflow/l10n/app_localizations.dart';
 
@@ -20,28 +19,6 @@ class CalendarScreen extends ConsumerWidget {
         title: Text(l10n.calendarTitle),
         actions: [
           IconButton(
-            onPressed: () => context.go('/reports'),
-            tooltip: l10n.navReports,
-            icon: const Icon(Icons.bar_chart),
-          ),
-          IconButton(
-            onPressed: () async {
-              final selected = await showDatePicker(
-                context: context,
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2100),
-                initialDate: date,
-              );
-              if (selected != null && context.mounted) {
-                await ref
-                    .read(calendarControllerProvider.notifier)
-                    .selectDay(selected);
-              }
-            },
-            tooltip: l10n.selectDate,
-            icon: const Icon(Icons.event),
-          ),
-          IconButton(
             onPressed: () => _createTemplate(context, ref),
             tooltip: l10n.weeklyTemplates,
             icon: const Icon(Icons.view_week),
@@ -58,9 +35,16 @@ class CalendarScreen extends ConsumerWidget {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text(
-                  _formatDate(date),
-                  style: Theme.of(context).textTheme.headlineSmall,
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    key: const Key('calendar-day-picker'),
+                    onPressed: () => _selectDay(context, ref, date),
+                    icon: const Icon(Icons.event),
+                    label: Text(
+                      '${_formatDate(date)} · ${l10n.changeCalendarDay}',
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 _SummaryCard(state: calendar),
@@ -80,6 +64,22 @@ class CalendarScreen extends ConsumerWidget {
               ],
             ),
     );
+  }
+
+  Future<void> _selectDay(
+    BuildContext context,
+    WidgetRef ref,
+    DateTime date,
+  ) async {
+    final selected = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      initialDate: date,
+    );
+    if (selected != null && context.mounted) {
+      await ref.read(calendarControllerProvider.notifier).selectDay(selected);
+    }
   }
 
   Future<void> _editBlock(

@@ -10,7 +10,10 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get todayTitle => 'Today';
+  String get todayTitle => 'Time Clock';
+
+  @override
+  String get navTimeClock => 'Clock';
 
   @override
   String get calendarTitle => 'Calendar';
@@ -28,7 +31,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navReports => 'Reports';
 
   @override
-  String get navBackup => 'Backup & Restore';
+  String get navBackup => 'Backup';
+
+  @override
+  String get changeCalendarDay => 'Change day';
 
   @override
   String get startWork => 'Start';

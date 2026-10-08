@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:timeflow/main.dart' as app;
@@ -14,6 +15,14 @@ void main() {
     expect(find.textContaining('Planned:'), findsOneWidget);
     expect(find.byTooltip('Add planned block'), findsOneWidget);
     expect(find.byTooltip('Weekly templates'), findsOneWidget);
+    expect(find.byKey(const Key('calendar-day-picker')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('calendar-day-picker')));
+    await tester.pumpAndSettle();
+    expect(find.byType(DatePickerDialog), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('Add planned block'), findsOneWidget);
   });
 }
 
