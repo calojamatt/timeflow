@@ -18,6 +18,7 @@
   "@totalToday": { "placeholders": { "duration": { "type": "String" } } },
   "noSessionsYet": "Todavía no hay sesiones",
   "noPlannedBlocks": "No hay bloques planificados",
+  "plannedBlocksTitle": "Bloques planificados",
   "selectDate": "Seleccionar fecha",
   "weeklyTemplates": "Plantillas semanales",
   "addPlannedBlock": "Añadir bloque planificado",

@@ -63,6 +63,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noPlannedBlocks => 'No hay bloques planificados';
 
   @override
+  String get plannedBlocksTitle => 'Bloques planificados';
+
+  @override
   String get selectDate => 'Seleccionar fecha';
 
   @override

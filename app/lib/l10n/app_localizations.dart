@@ -200,6 +200,12 @@ abstract class AppLocalizations {
   /// **'No planned blocks'**
   String get noPlannedBlocks;
 
+  /// No description provided for @plannedBlocksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned blocks'**
+  String get plannedBlocksTitle;
+
   /// No description provided for @selectDate.
   ///
   /// In en, this message translates to:
