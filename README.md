@@ -58,7 +58,7 @@ timeflow/
 | 2 | Planning & Calendar | ✅ Released — `v1.1.0` |
 | 3 | Reminders | ✅ Released — `v1.2.0` |
 | 4 | Reports & Export | ✅ Released — `v1.3.0` |
-| 5 | Backup & release hardening | ✅ Release candidate — `v1.4.0-rc.1`; signed store artifacts gated on owner credentials |
+| 5 | Backup & release hardening | ✅ Source released — `v1.4.0`; signed store artifacts gated on owner credentials |
 | 6 | Cloud sync (optional) | ⬜ |
 
 ## Development process
