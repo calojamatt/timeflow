@@ -47,6 +47,21 @@ void main() {
 
     expect(find.text('Idle'), findsOneWidget);
     expect(find.text('No sessions yet'), findsOneWidget);
+    final todayCard = find.byKey(const Key('time-today-card'));
+    expect(todayCard, findsOneWidget);
+    expect(
+      find.descendant(of: todayCard, matching: find.text('Idle')),
+      findsOneWidget,
+    );
+    final emptySessionsCard = find.byKey(const Key('empty-sessions-card'));
+    expect(emptySessionsCard, findsOneWidget);
+    expect(
+      find.descendant(
+        of: emptySessionsCard,
+        matching: find.text('No sessions yet'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('renders Running state with elapsed time and session list', (
@@ -183,6 +198,8 @@ void main() {
 
     final tile = find.byType(ListTile);
     expect(tile, findsOneWidget);
+    final sessionCard = find.ancestor(of: tile, matching: find.byType(Card));
+    expect(sessionCard, findsOneWidget);
     expect(
       find.descendant(of: tile, matching: find.text('02:30:00')),
       findsOneWidget,

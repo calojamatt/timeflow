@@ -25,7 +25,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Today'), findsOneWidget);
+    expect(find.text('Time Clock'), findsOneWidget);
     expect(find.text('Idle'), findsOneWidget);
   });
 }

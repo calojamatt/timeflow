@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:timeflow/domain/work_session.dart';
 import 'package:timeflow/l10n/app_localizations.dart';
 
@@ -15,45 +14,58 @@ class TodayScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.todayTitle),
-        actions: [
-          IconButton(
-            onPressed: () => context.go('/calendar'),
-            tooltip: l10n.navCalendar,
-            icon: const Icon(Icons.calendar_month),
-          ),
-          IconButton(
-            onPressed: () => context.go('/reports'),
-            tooltip: l10n.navReports,
-            icon: const Icon(Icons.bar_chart),
-          ),
-          IconButton(
-            onPressed: () => context.push('/backup'),
-            tooltip: l10n.navBackup,
-            icon: const Icon(Icons.backup),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(l10n.todayTitle)),
       floatingActionButton: FloatingActionButton(
         onPressed: () => ref.read(todayControllerProvider.notifier).toggle(),
         tooltip: today.isRunning ? l10n.stopWork : l10n.startWork,
         child: Icon(today.isRunning ? Icons.stop : Icons.play_arrow),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
         children: [
-          _TimerHeader(state: today),
-          const Divider(height: 1),
-          Expanded(
-            child: today.sessions.isEmpty
-                ? Center(child: Text(l10n.noSessionsYet))
-                : ListView.builder(
-                    itemCount: today.sessions.length,
-                    itemBuilder: (context, index) =>
-                        _SessionTile(session: today.sessions[index]),
-                  ),
+          Card(
+            key: const Key('time-today-card'),
+            child: _TimerHeader(state: today),
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.sessions,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                if (today.sessions.isNotEmpty)
+                  Chip(
+                    label: Text('${today.sessions.length}'),
+                    visualDensity: VisualDensity.compact,
+                  ),
+              ],
+            ),
+          ),
+          if (today.sessions.isEmpty)
+            Card(
+              key: const Key('empty-sessions-card'),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.hourglass_empty,
+                      size: 32,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(l10n.noSessionsYet),
+                  ],
+                ),
+              ),
+            )
+          else
+            ...today.sessions.map((session) => _SessionTile(session: session)),
         ],
       ),
     );
@@ -70,7 +82,7 @@ class _TimerHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Text(
@@ -105,11 +117,22 @@ class _SessionTile extends StatelessWidget {
     final end = session.endedAtUtc;
     final endText = end == null ? l10n.running : formatClockTime(end.toLocal());
 
-    return ListTile(
-      title: Text('$start – $endText'),
-      trailing: end == null
-          ? null
-          : Text(formatDuration(end.difference(session.startedAtUtc))),
+    return Card(
+      key: Key('session-card-${session.id}'),
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        leading: Icon(
+          end == null ? Icons.play_circle_outline : Icons.check_circle_outline,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        title: Text('$start – $endText'),
+        subtitle: session.note == null || session.note!.isEmpty
+            ? null
+            : Text(session.note!),
+        trailing: end == null
+            ? null
+            : Text(formatDuration(end.difference(session.startedAtUtc))),
+      ),
     );
   }
 }

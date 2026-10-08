@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:timeflow/domain/planned_block.dart';
 import 'package:timeflow/l10n/app_localizations.dart';
 
@@ -20,28 +19,6 @@ class CalendarScreen extends ConsumerWidget {
         title: Text(l10n.calendarTitle),
         actions: [
           IconButton(
-            onPressed: () => context.go('/reports'),
-            tooltip: l10n.navReports,
-            icon: const Icon(Icons.bar_chart),
-          ),
-          IconButton(
-            onPressed: () async {
-              final selected = await showDatePicker(
-                context: context,
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2100),
-                initialDate: date,
-              );
-              if (selected != null && context.mounted) {
-                await ref
-                    .read(calendarControllerProvider.notifier)
-                    .selectDay(selected);
-              }
-            },
-            tooltip: l10n.selectDate,
-            icon: const Icon(Icons.event),
-          ),
-          IconButton(
             onPressed: () => _createTemplate(context, ref),
             tooltip: l10n.weeklyTemplates,
             icon: const Icon(Icons.view_week),
@@ -58,15 +35,57 @@ class CalendarScreen extends ConsumerWidget {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text(
-                  _formatDate(date),
-                  style: Theme.of(context).textTheme.headlineSmall,
+                Card(
+                  key: const Key('calendar-day-card'),
+                  clipBehavior: Clip.antiAlias,
+                  child: ListTile(
+                    key: const Key('calendar-day-picker'),
+                    onTap: () => _selectDay(context, ref, date),
+                    leading: Icon(
+                      Icons.event,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    title: Text(_formatDate(date)),
+                    subtitle: Text(l10n.changeCalendarDay),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 _SummaryCard(state: calendar),
                 const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+                  child: Text(
+                    l10n.plannedBlocksTitle,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
                 if (calendar.blocks.isEmpty)
-                  Center(child: Text(l10n.noPlannedBlocks))
+                  Card(
+                    key: const Key('empty-planned-blocks-card'),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.event_busy,
+                            size: 32,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(l10n.noPlannedBlocks),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            onPressed: () => _editBlock(context, ref),
+                            icon: const Icon(Icons.add),
+                            label: Text(l10n.addPlannedBlock),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 else
                   ...calendar.blocks.map(
                     (block) => _BlockTile(
@@ -80,6 +99,22 @@ class CalendarScreen extends ConsumerWidget {
               ],
             ),
     );
+  }
+
+  Future<void> _selectDay(
+    BuildContext context,
+    WidgetRef ref,
+    DateTime date,
+  ) async {
+    final selected = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      initialDate: date,
+    );
+    if (selected != null && context.mounted) {
+      await ref.read(calendarControllerProvider.notifier).selectDay(selected);
+    }
   }
 
   Future<void> _editBlock(
@@ -157,16 +192,25 @@ class _BlockTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return ListTile(
-      title: Text(
-        '${formatMinute(block.startMinute)} – ${formatMinute(block.endMinute)}',
-      ),
-      subtitle: Text(formatDuration(block.duration)),
-      onTap: onEdit,
-      trailing: IconButton(
-        onPressed: onDelete,
-        tooltip: l10n.deletePlannedBlock,
-        icon: const Icon(Icons.delete_outline),
+    return Card(
+      key: Key('planned-block-card-${block.id}'),
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        title: Text(
+          '${formatMinute(block.startMinute)} – ${formatMinute(block.endMinute)}',
+        ),
+        subtitle: Text(
+          [
+            formatDuration(block.duration),
+            if (block.note != null && block.note!.isNotEmpty) block.note!,
+          ].join(' · '),
+        ),
+        onTap: onEdit,
+        trailing: IconButton(
+          onPressed: onDelete,
+          tooltip: l10n.deletePlannedBlock,
+          icon: const Icon(Icons.delete_outline),
+        ),
       ),
     );
   }

@@ -13,12 +13,12 @@ void main() {
 
     await pumpUntilVisible(tester, find.text('Idle'));
 
-    expect(find.text('Today'), findsOneWidget);
+    expect(find.text('Time Clock'), findsOneWidget);
     await tester.tap(find.byTooltip('Backup & Restore'));
     await pumpUntilVisible(tester, find.text('Backup & Restore'));
     expect(find.text('Create backup'), findsOneWidget);
     expect(find.text('Restore from file'), findsOneWidget);
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Time Clock'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Reports'));
     await pumpUntilVisible(tester, find.text('Daily summary'));
