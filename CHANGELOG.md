@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   transactional restore, and native file share/picker UI.
 - A confirmation-gated clear-data control removes sessions, plans, templates,
   reminder preferences, and scheduled local notifications.
+- Release metadata now matches the `v1.3.0` tag, app labels are consistently
+  branded `TimeFlow`, and Android release variants require private signing
+  credentials rather than silently using the debug key.
+- Add English/Spanish UI localization, Android/iOS locale declarations, and
+  privacy and Android signing documentation.
 
 ## [1.3.0] - 2026-10-08
 

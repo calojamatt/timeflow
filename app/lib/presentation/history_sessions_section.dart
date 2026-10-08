@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeflow/domain/local_day.dart';
 import 'package:timeflow/domain/work_session.dart';
+import 'package:timeflow/l10n/app_localizations.dart';
 
 import 'providers.dart';
 
@@ -12,22 +13,23 @@ class HistorySessionsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final sessions = ref.watch(workSessionHistoryProvider(localDay));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        Text('Sessions', style: Theme.of(context).textTheme.titleLarge),
+        Text(l10n.sessions, style: Theme.of(context).textTheme.titleLarge),
         sessions.when(
           loading: () => const Padding(
             padding: EdgeInsets.all(16),
             child: Center(child: CircularProgressIndicator()),
           ),
-          error: (error, stack) => Text('Could not load sessions: $error'),
+          error: (error, stack) => Text(l10n.couldNotLoadSessions),
           data: (items) => items.isEmpty
-              ? const Padding(
+              ? Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Text('No sessions for this day'),
+                  child: Text(l10n.noSessionsForDay),
                 )
               : Column(
                   children: [
@@ -74,7 +76,9 @@ class HistorySessionsSection extends ConsumerWidget {
     } catch (error) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not update session: $error')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.couldNotUpdateSession),
+          ),
         );
       }
     }
@@ -85,19 +89,20 @@ class HistorySessionsSection extends ConsumerWidget {
     WidgetRef ref,
     WorkSession session,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete session?'),
-        content: const Text('This recorded work time will be removed.'),
+        title: Text(l10n.deleteSessionQuestion),
+        content: Text(l10n.deleteSessionBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -111,7 +116,9 @@ class HistorySessionsSection extends ConsumerWidget {
     } catch (error) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not delete session: $error')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.couldNotDeleteSession),
+          ),
         );
       }
     }
@@ -139,12 +146,12 @@ class _HistorySessionTile extends StatelessWidget {
     child: ListTile(
       title: Text(
         '${_formatMoment(session.startedAtUtc)} – '
-        '${session.endedAtUtc == null ? 'Running' : _formatMoment(session.endedAtUtc!)}',
+        '${session.endedAtUtc == null ? AppLocalizations.of(context)!.running : _formatMoment(session.endedAtUtc!)}',
       ),
       subtitle: Text(
         [
           session.endedAtUtc == null
-              ? 'In progress'
+              ? AppLocalizations.of(context)!.inProgress
               : _formatDuration(
                   session.endedAtUtc!.difference(session.startedAtUtc),
                 ),
@@ -154,14 +161,20 @@ class _HistorySessionTile extends StatelessWidget {
       trailing: onEdit == null
           ? null
           : PopupMenuButton<String>(
-              tooltip: 'Session actions',
+              tooltip: AppLocalizations.of(context)!.sessionActions,
               onSelected: (action) {
                 if (action == 'edit') onEdit!();
                 if (action == 'delete') onDelete!();
               },
-              itemBuilder: (context) => const [
-                PopupMenuItem(value: 'edit', child: Text('Edit session')),
-                PopupMenuItem(value: 'delete', child: Text('Delete session')),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'edit',
+                  child: Text(AppLocalizations.of(context)!.editSession),
+                ),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Text(AppLocalizations.of(context)!.deleteSession),
+                ),
               ],
             ),
     ),
@@ -206,39 +219,42 @@ class _EditSessionDialogState extends State<_EditSessionDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: const Text('Edit session'),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: const Text('Start'),
-          subtitle: Text(_formatMoment(_start)),
-          onTap: () => _pickMoment(start: true),
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: const Text('End'),
-          subtitle: Text(_formatMoment(_end)),
-          onTap: () => _pickMoment(start: false),
-        ),
-        TextField(
-          controller: _note,
-          decoration: const InputDecoration(labelText: 'Note (optional)'),
-        ),
-        if (_error != null)
-          Text(_error!, style: const TextStyle(color: Colors.red)),
-      ],
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Cancel'),
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      title: Text(l10n.editSession),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.startLabel),
+            subtitle: Text(_formatMoment(_start)),
+            onTap: () => _pickMoment(start: true),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.endLabel),
+            subtitle: Text(_formatMoment(_end)),
+            onTap: () => _pickMoment(start: false),
+          ),
+          TextField(
+            controller: _note,
+            decoration: InputDecoration(labelText: l10n.noteOptional),
+          ),
+          if (_error != null)
+            Text(_error!, style: const TextStyle(color: Colors.red)),
+        ],
       ),
-      FilledButton(onPressed: _save, child: const Text('Save')),
-    ],
-  );
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(onPressed: _save, child: Text(l10n.save)),
+      ],
+    );
+  }
 
   Future<void> _pickMoment({required bool start}) async {
     final current = start ? _start : _end;
@@ -272,7 +288,7 @@ class _EditSessionDialogState extends State<_EditSessionDialog> {
 
   void _save() {
     if (!_end.isAfter(_start)) {
-      setState(() => _error = 'End must be after start');
+      setState(() => _error = AppLocalizations.of(context)!.endMustFollowStart);
       return;
     }
     Navigator.pop(

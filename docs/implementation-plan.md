@@ -124,7 +124,7 @@ Exit gate:
 
 ## Phase 5 — Backup and Release Hardening
 
-Status: **in progress; backup format and transactional restore implemented**
+Status: **in progress; backup, restore, data deletion, bilingual UI, and Android signing safeguards implemented**
 
 Objective: protect user data and prepare a public-quality release.
 

@@ -5,19 +5,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeflow/data/app_database.dart';
 import 'package:timeflow/data/work_session_repository_impl.dart';
 import 'package:timeflow/domain/local_day.dart';
+import 'package:timeflow/l10n/app_localizations.dart';
 import 'package:timeflow/presentation/providers.dart';
+import 'package:timeflow/presentation/today_controller.dart';
 import 'package:timeflow/presentation/today_screen.dart';
 
 import '../helpers/fake_clock.dart';
 
 void main() {
-  Widget buildApp(AppDatabase db, FakeClock clock) {
+  Widget buildApp(
+    AppDatabase db,
+    FakeClock clock, {
+    List<ProviderObserver> observers = const [],
+  }) {
     return ProviderScope(
+      observers: observers,
       overrides: [
         databaseProvider.overrideWithValue(db),
         clockProvider.overrideWithValue(clock),
       ],
-      child: const MaterialApp(home: TodayScreen()),
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const TodayScreen(),
+      ),
     );
   }
 
@@ -230,4 +241,32 @@ void main() {
 
     expect(find.text('Total today: 01:30:00'), findsOneWidget);
   });
+
+  testWidgets('idle screen does not run a periodic timer ticker', (
+    tester,
+  ) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final clock = FakeClock(DateTime.utc(2026, 1, 1, 9));
+    final observer = _TodayUpdateObserver();
+
+    await pumpAndLoad(tester, buildApp(db, clock, observers: [observer]));
+    observer.updates = 0;
+    await tester.pump(const Duration(seconds: 15));
+
+    expect(observer.updates, 0);
+  });
+}
+
+final class _TodayUpdateObserver extends ProviderObserver {
+  int updates = 0;
+
+  @override
+  void didUpdateProvider(
+    ProviderObserverContext context,
+    Object? previousValue,
+    Object? newValue,
+  ) {
+    if (context.provider == todayControllerProvider) updates++;
+  }
 }

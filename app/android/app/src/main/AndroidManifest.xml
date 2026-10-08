@@ -1,9 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
-        android:label="timeflow"
+        android:label="TimeFlow"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:localeConfig="@xml/locales_config">
         <!-- Impeller (OpenGLES) renders a blank surface on some emulators with
              SwiftShader; fall back to Skia so the UI is actually visible. -->
         <meta-data

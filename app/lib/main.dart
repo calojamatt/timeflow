@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:timeflow/l10n/app_localizations.dart';
 
 import 'presentation/app_router.dart';
 import 'presentation/providers.dart';
@@ -33,6 +35,13 @@ class _TimeFlowAppState extends ConsumerState<TimeFlowApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'TimeFlow',
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),

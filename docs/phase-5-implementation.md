@@ -30,13 +30,27 @@ Protect local user data and prepare TimeFlow for public distribution.
 - [x] Add domain, repository, rollback, migration, and Backup screen tests.
 - [x] Add a confirmation-gated all-local-data deletion flow and cancel scheduled
   notifications when the user clears app data.
-- [x] Full Flutter suite now passes 100 tests; analyzer and Android debug APK
+- [x] Full Flutter suite now passes 103 tests; analyzer and Android debug APK
   build pass after the privacy slice.
+- [x] Localize app screens in English and Spanish and add semantic-label
+  coverage for navigation actions and 1.5× text scaling.
+- [x] Add an idle-state ticker smoke test to guard against unnecessary periodic
+  wakeups when no work session is running.
+- [x] Document privacy behavior, align app metadata with the release tag, and
+  require a private maintainer keystore for Android release packaging.
+- [x] Verify an unsigned release build is blocked with an actionable signing
+  error instead of silently producing a debug-signed release.
 - [x] Pixel 10 Pro integration smoke test reached Backup & Restore and Reports;
   the AVD disconnected/crashed during teardown in the broader local integration
   run, so CI/device rerun remains part of the review gate.
-- [ ] Accessibility review, broader device/release
-  hardening, and final `v1.4.0` gates remain.
+- [ ] Additional screen-reader/text-scale device review, supply production
+  signing credentials, prepare signed artifacts, and complete final `v1.4.0`
+  gates.
+
+The Android release build was intentionally tested without a keystore and is
+blocked with the expected actionable signing configuration message. Debug APK
+builds do not need these secrets. A production upload key must be supplied by
+the release owner; it is not generated or committed by this implementation.
 
 ### Backup compatibility policy
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timeflow/domain/planned_block.dart';
+import 'package:timeflow/l10n/app_localizations.dart';
 
 import 'calendar_controller.dart';
 
@@ -10,16 +11,17 @@ class CalendarScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final calendar = ref.watch(calendarControllerProvider);
     final date = _dateFromDay(calendar.localDay);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar'),
+        title: Text(l10n.calendarTitle),
         actions: [
           IconButton(
             onPressed: () => context.go('/reports'),
-            tooltip: 'Reports',
+            tooltip: l10n.navReports,
             icon: const Icon(Icons.bar_chart),
           ),
           IconButton(
@@ -36,19 +38,19 @@ class CalendarScreen extends ConsumerWidget {
                     .selectDay(selected);
               }
             },
-            tooltip: 'Select date',
+            tooltip: l10n.selectDate,
             icon: const Icon(Icons.event),
           ),
           IconButton(
             onPressed: () => _createTemplate(context, ref),
-            tooltip: 'Weekly templates',
+            tooltip: l10n.weeklyTemplates,
             icon: const Icon(Icons.view_week),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _editBlock(context, ref),
-        tooltip: 'Add planned block',
+        tooltip: l10n.addPlannedBlock,
         child: const Icon(Icons.add),
       ),
       body: calendar.loading
@@ -64,7 +66,7 @@ class CalendarScreen extends ConsumerWidget {
                 _SummaryCard(state: calendar),
                 const SizedBox(height: 16),
                 if (calendar.blocks.isEmpty)
-                  const Center(child: Text('No planned blocks'))
+                  Center(child: Text(l10n.noPlannedBlocks))
                 else
                   ...calendar.blocks.map(
                     (block) => _BlockTile(
@@ -123,19 +125,22 @@ class _SummaryCard extends StatelessWidget {
   final CalendarState state;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Planned: ${formatDuration(state.planned)}'),
-          Text('Actual: ${formatDuration(state.actual)}'),
-          Text('Variance: ${formatDuration(state.variance.abs())}'),
-        ],
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${l10n.planned}: ${formatDuration(state.planned)}'),
+            Text('${l10n.actual}: ${formatDuration(state.actual)}'),
+            Text('${l10n.variance}: ${formatDuration(state.variance.abs())}'),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _BlockTile extends StatelessWidget {
@@ -150,18 +155,21 @@ class _BlockTile extends StatelessWidget {
   final VoidCallback onDelete;
 
   @override
-  Widget build(BuildContext context) => ListTile(
-    title: Text(
-      '${formatMinute(block.startMinute)} – ${formatMinute(block.endMinute)}',
-    ),
-    subtitle: Text(formatDuration(block.duration)),
-    onTap: onEdit,
-    trailing: IconButton(
-      onPressed: onDelete,
-      tooltip: 'Delete planned block',
-      icon: const Icon(Icons.delete_outline),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return ListTile(
+      title: Text(
+        '${formatMinute(block.startMinute)} – ${formatMinute(block.endMinute)}',
+      ),
+      subtitle: Text(formatDuration(block.duration)),
+      onTap: onEdit,
+      trailing: IconButton(
+        onPressed: onDelete,
+        tooltip: l10n.deletePlannedBlock,
+        icon: const Icon(Icons.delete_outline),
+      ),
+    );
+  }
 }
 
 class _BlockDraft {
@@ -208,45 +216,50 @@ class _BlockDialogState extends State<_BlockDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: Text(
-      widget.block == null ? 'Add planned block' : 'Edit planned block',
-    ),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          controller: _start,
-          decoration: const InputDecoration(labelText: 'Start (HH:MM)'),
-          keyboardType: TextInputType.datetime,
-        ),
-        TextField(
-          controller: _end,
-          decoration: const InputDecoration(labelText: 'End (HH:MM)'),
-          keyboardType: TextInputType.datetime,
-        ),
-        TextField(
-          controller: _note,
-          decoration: const InputDecoration(labelText: 'Note (optional)'),
-        ),
-        if (_error != null)
-          Text(_error!, style: const TextStyle(color: Colors.red)),
-      ],
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Cancel'),
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      title: Text(
+        widget.block == null ? l10n.addPlannedBlock : l10n.editPlannedBlock,
       ),
-      FilledButton(onPressed: _save, child: const Text('Save')),
-    ],
-  );
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _start,
+            decoration: InputDecoration(labelText: l10n.startTime),
+            keyboardType: TextInputType.datetime,
+          ),
+          TextField(
+            controller: _end,
+            decoration: InputDecoration(labelText: l10n.endTime),
+            keyboardType: TextInputType.datetime,
+          ),
+          TextField(
+            controller: _note,
+            decoration: InputDecoration(labelText: l10n.noteOptional),
+          ),
+          if (_error != null)
+            Text(_error!, style: const TextStyle(color: Colors.red)),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(onPressed: _save, child: Text(l10n.save)),
+      ],
+    );
+  }
 
   void _save() {
     final start = parseMinute(_start.text);
     final end = parseMinute(_end.text);
     if (start == null || end == null || end <= start) {
-      setState(() => _error = 'Enter a valid non-overnight time range');
+      setState(
+        () => _error = AppLocalizations.of(context)!.validTimeRangeError,
+      );
       return;
     }
     Navigator.pop(
@@ -297,44 +310,50 @@ class _TemplateDialogState extends State<_TemplateDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: const Text('Create weekly template'),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          controller: _name,
-          decoration: const InputDecoration(labelText: 'Name'),
-        ),
-        DropdownButtonFormField<int>(
-          initialValue: _weekday,
-          decoration: const InputDecoration(labelText: 'Weekday'),
-          items: [
-            for (var day = DateTime.monday; day <= DateTime.sunday; day++)
-              DropdownMenuItem(value: day, child: Text(_weekdayName(day))),
-          ],
-          onChanged: (value) => setState(() => _weekday = value ?? _weekday),
-        ),
-        TextField(
-          controller: _start,
-          decoration: const InputDecoration(labelText: 'Start (HH:MM)'),
-        ),
-        TextField(
-          controller: _end,
-          decoration: const InputDecoration(labelText: 'End (HH:MM)'),
-        ),
-        if (_error != null)
-          Text(_error!, style: const TextStyle(color: Colors.red)),
-      ],
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Cancel'),
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      title: Text(l10n.createWeeklyTemplate),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _name,
+            decoration: InputDecoration(labelText: l10n.name),
+          ),
+          DropdownButtonFormField<int>(
+            initialValue: _weekday,
+            decoration: InputDecoration(labelText: l10n.weekday),
+            items: [
+              for (var day = DateTime.monday; day <= DateTime.sunday; day++)
+                DropdownMenuItem(
+                  value: day,
+                  child: Text(_weekdayName(l10n, day)),
+                ),
+            ],
+            onChanged: (value) => setState(() => _weekday = value ?? _weekday),
+          ),
+          TextField(
+            controller: _start,
+            decoration: InputDecoration(labelText: l10n.startTime),
+          ),
+          TextField(
+            controller: _end,
+            decoration: InputDecoration(labelText: l10n.endTime),
+          ),
+          if (_error != null)
+            Text(_error!, style: const TextStyle(color: Colors.red)),
+        ],
       ),
-      FilledButton(onPressed: _save, child: const Text('Save & apply')),
-    ],
-  );
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(onPressed: _save, child: Text(l10n.saveAndApply)),
+      ],
+    );
+  }
 
   void _save() {
     final start = parseMinute(_start.text);
@@ -343,7 +362,9 @@ class _TemplateDialogState extends State<_TemplateDialog> {
         start == null ||
         end == null ||
         end <= start) {
-      setState(() => _error = 'Enter a name and valid time range');
+      setState(
+        () => _error = AppLocalizations.of(context)!.nameAndTimeRangeError,
+      );
       return;
     }
     Navigator.pop(
@@ -358,16 +379,16 @@ class _TemplateDialogState extends State<_TemplateDialog> {
   }
 }
 
-String _weekdayName(int weekday) => const [
-  '',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-][weekday];
+String _weekdayName(AppLocalizations l10n, int weekday) => switch (weekday) {
+  DateTime.monday => l10n.weekdayMonday,
+  DateTime.tuesday => l10n.weekdayTuesday,
+  DateTime.wednesday => l10n.weekdayWednesday,
+  DateTime.thursday => l10n.weekdayThursday,
+  DateTime.friday => l10n.weekdayFriday,
+  DateTime.saturday => l10n.weekdaySaturday,
+  DateTime.sunday => l10n.weekdaySunday,
+  _ => '',
+};
 
 DateTime _dateFromDay(int localDay) =>
     DateTime(1970, 1, 1).add(Duration(days: localDay));
