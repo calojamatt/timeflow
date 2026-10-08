@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timeflow/domain/work_session.dart';
+import 'package:timeflow/l10n/app_localizations.dart';
 
 import 'today_controller.dart';
 
@@ -11,31 +12,32 @@ class TodayScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final today = ref.watch(todayControllerProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Today'),
+        title: Text(l10n.todayTitle),
         actions: [
           IconButton(
             onPressed: () => context.go('/calendar'),
-            tooltip: 'Calendar',
+            tooltip: l10n.navCalendar,
             icon: const Icon(Icons.calendar_month),
           ),
           IconButton(
             onPressed: () => context.go('/reports'),
-            tooltip: 'Reports',
+            tooltip: l10n.navReports,
             icon: const Icon(Icons.bar_chart),
           ),
           IconButton(
             onPressed: () => context.push('/backup'),
-            tooltip: 'Backup & Restore',
+            tooltip: l10n.navBackup,
             icon: const Icon(Icons.backup),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => ref.read(todayControllerProvider.notifier).toggle(),
-        tooltip: today.isRunning ? 'Stop' : 'Start',
+        tooltip: today.isRunning ? l10n.stopWork : l10n.startWork,
         child: Icon(today.isRunning ? Icons.stop : Icons.play_arrow),
       ),
       body: Column(
@@ -45,7 +47,7 @@ class TodayScreen extends ConsumerWidget {
           const Divider(height: 1),
           Expanded(
             child: today.sessions.isEmpty
-                ? const Center(child: Text('No sessions yet'))
+                ? Center(child: Text(l10n.noSessionsYet))
                 : ListView.builder(
                     itemCount: today.sessions.length,
                     itemBuilder: (context, index) =>
@@ -66,12 +68,13 @@ class _TimerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
           Text(
-            state.isRunning ? 'Running' : 'Idle',
+            state.isRunning ? l10n.running : l10n.idle,
             style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
@@ -81,7 +84,7 @@ class _TimerHeader extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Total today: ${formatDuration(state.total)}',
+            l10n.totalToday(formatDuration(state.total)),
             style: theme.textTheme.bodyMedium,
           ),
         ],
@@ -97,9 +100,10 @@ class _SessionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final start = formatClockTime(session.startedAtUtc.toLocal());
     final end = session.endedAtUtc;
-    final endText = end == null ? 'Running' : formatClockTime(end.toLocal());
+    final endText = end == null ? l10n.running : formatClockTime(end.toLocal());
 
     return ListTile(
       title: Text('$start – $endText'),

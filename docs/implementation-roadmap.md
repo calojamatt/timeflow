@@ -13,7 +13,7 @@ product phases.
 | 2 — Planning and Calendar | `v1.1.0` | Released |
 | 3 — Reminders and notifications | `v1.2.0` | Released |
 | 4 — Reports and export | `v1.3.0` | Released |
-| 5 — Backup and release hardening | `v1.4.0` | In progress — backup/restore core implemented |
+| 5 — Backup and release hardening | `v1.4.0` | In progress — backup, privacy controls, bilingual UI, and signing safeguards |
 | 6 — Optional cloud synchronization | `v2.0.0` | Deferred until Phase 5 is complete |
 
 Phase 4 shipped after 89 Flutter tests, analyzer, Android debug build, and Pixel

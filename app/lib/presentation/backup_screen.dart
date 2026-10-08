@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timeflow/l10n/app_localizations.dart';
 
 import 'calendar_controller.dart';
 import 'providers.dart';
@@ -16,67 +17,59 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   bool _busy = false;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Backup & Restore')),
-    body: ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        const Text(
-          'TimeFlow stores your work data on this device. Create a JSON backup '
-          'and save it somewhere safe. Restoring replaces all current TimeFlow '
-          'data on this device.',
-        ),
-        const SizedBox(height: 20),
-        FilledButton.icon(
-          key: const Key('create-backup'),
-          onPressed: _busy ? null : _createBackup,
-          icon: const Icon(Icons.save_alt),
-          label: const Text('Create backup'),
-        ),
-        const SizedBox(height: 12),
-        OutlinedButton.icon(
-          key: const Key('restore-backup'),
-          onPressed: _busy ? null : _restoreBackup,
-          icon: const Icon(Icons.restore),
-          label: const Text('Restore from file'),
-        ),
-        if (_busy) ...[
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.backupTitle)),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text(l10n.backupIntro),
           const SizedBox(height: 20),
-          const Center(child: CircularProgressIndicator()),
-        ],
-        const SizedBox(height: 24),
-        const Text(
-          'Backups include work sessions, planned blocks, weekly templates, '
-          'and reminder preferences. TimeFlow does not upload this data unless '
-          'you choose a sharing destination.',
-        ),
-        const SizedBox(height: 32),
-        const Divider(),
-        Text(
-          'Privacy controls',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'Delete all locally stored sessions, plans, templates, and reminder '
-          'preferences. This does not remove copies you previously shared or '
-          'saved outside TimeFlow.',
-        ),
-        const SizedBox(height: 8),
-        TextButton.icon(
-          key: const Key('delete-local-data'),
-          onPressed: _busy ? null : _deleteAllLocalData,
-          icon: const Icon(Icons.delete_forever),
-          label: const Text('Delete all local data'),
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.error,
+          FilledButton.icon(
+            key: const Key('create-backup'),
+            onPressed: _busy ? null : _createBackup,
+            icon: const Icon(Icons.save_alt),
+            label: Text(l10n.createBackup),
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            key: const Key('restore-backup'),
+            onPressed: _busy ? null : _restoreBackup,
+            icon: const Icon(Icons.restore),
+            label: Text(l10n.restoreFromFile),
+          ),
+          if (_busy) ...[
+            const SizedBox(height: 20),
+            const Center(child: CircularProgressIndicator()),
+          ],
+          const SizedBox(height: 24),
+          Text(l10n.backupContents),
+          const SizedBox(height: 32),
+          const Divider(),
+          Text(
+            l10n.privacyControls,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(l10n.deleteAllLocalDataDescription),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            key: const Key('delete-local-data'),
+            onPressed: _busy ? null : _deleteAllLocalData,
+            icon: const Icon(Icons.delete_forever),
+            label: Text(l10n.deleteAllLocalData),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<void> _createBackup() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _busy = true);
     try {
       final now = ref.read(clockProvider).now().toUtc();
@@ -96,9 +89,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             fileName: 'timeflow-backup-$stamp.json',
             content: content,
           );
-      _message('Backup ready to save');
+      _message(l10n.backupReadyToSave);
     } catch (error) {
-      _message('Could not create backup: $error');
+      _message(l10n.couldNotCreateBackup);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -106,6 +99,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
   Future<void> _restoreBackup() async {
     if (_busy) return;
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _busy = true);
     try {
       final content = await ref.read(backupFileServiceProvider).pickBackup();
@@ -114,20 +108,16 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Replace local data?'),
-          content: const Text(
-            'The selected backup will replace all work sessions, plans, '
-            'templates, and reminder preferences on this device. This cannot '
-            'be undone.',
-          ),
+          title: Text(l10n.replaceLocalDataQuestion),
+          content: Text(l10n.replaceLocalDataBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Replace data'),
+              child: Text(l10n.replaceData),
             ),
           ],
         ),
@@ -139,34 +129,32 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       ref.invalidate(calendarControllerProvider);
       ref.invalidate(workSessionHistoryProvider);
       ref.invalidate(reportSummaryProvider);
-      _message('Backup restored');
+      _message(l10n.backupRestored);
     } catch (error) {
-      _message('Could not restore backup: $error');
+      _message(l10n.couldNotRestoreBackup);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
 
   Future<void> _deleteAllLocalData() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete all local data?'),
-        content: const Text(
-          'All sessions, plans, templates, and reminder preferences on this '
-          'device will be permanently deleted. This cannot be undone.',
-        ),
+        title: Text(l10n.deleteAllDataQuestion),
+        content: Text(l10n.deleteAllDataBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete permanently'),
+            child: Text(l10n.deletePermanently),
           ),
         ],
       ),
@@ -182,9 +170,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       ref.invalidate(calendarControllerProvider);
       ref.invalidate(workSessionHistoryProvider);
       ref.invalidate(reportSummaryProvider);
-      _message('All local TimeFlow data deleted');
+      _message(l10n.allLocalDataDeleted);
     } catch (error) {
-      _message('Could not delete all local data: $error');
+      _message(l10n.couldNotDeleteLocalData);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

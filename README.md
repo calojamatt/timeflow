@@ -2,7 +2,7 @@
 
 TimeFlow is a **local-first, cross-platform mobile app** to register your working time: clock in, clock out, and review your worked hours per day, week, and month — with planned-vs-actual comparison and reminders.
 
-Built with **Flutter** for **iOS and Android**.
+Built with **Flutter** for **iOS and Android**, with English and Spanish UI.
 
 ## What it does
 
@@ -16,6 +16,8 @@ Built with **Flutter** for **iOS and Android**.
 - **Privacy controls** to clear all locally stored app data.
 
 Everything works **offline**. Data lives on the device; cloud sync is a later, optional phase.
+See [the privacy summary](docs/privacy-policy.md) for local storage, sharing,
+and deletion behavior.
 
 ## Core principles
 
@@ -35,6 +37,8 @@ timeflow/
 │   │   ├── overview.md
 │   │   ├── decisions.md
 │   │   └── diagrams/architecture.mmd
+│   ├── privacy-policy.md
+│   ├── android-release-signing.md
 │   ├── product/phase-1-scope.md
 │   └── development/
 │       ├── xp-process.md
@@ -42,7 +46,7 @@ timeflow/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
 │   └── workflows/
-└── app/            # Flutter project — added after Phase 0 design is approved
+└── app/            # Flutter app, localizations, and tests
 ```
 
 ## Phases
@@ -54,7 +58,7 @@ timeflow/
 | 2 | Planning & Calendar | ✅ Released — `v1.1.0` |
 | 3 | Reminders | ✅ Released — `v1.2.0` |
 | 4 | Reports & Export | ✅ Released — `v1.3.0` |
-| 5 | Backup & release hardening | 🚧 In progress — versioned backup/restore |
+| 5 | Backup & release hardening | 🚧 In progress — bilingual backup/privacy flows; signing gate remains |
 | 6 | Cloud sync (optional) | ⬜ |
 
 ## Development process

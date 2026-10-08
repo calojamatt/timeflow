@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeflow/domain/local_day.dart';
+import 'package:timeflow/l10n/app_localizations.dart';
 
 import 'providers.dart';
 import 'history_sessions_section.dart';
@@ -26,7 +27,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final (from, to) = _bounds(_date, _period);
+    final periodTitle = switch (_period) {
+      _ReportPeriod.day => l10n.dailySummary,
+      _ReportPeriod.week => l10n.weeklySummary,
+      _ReportPeriod.month => l10n.monthlySummary,
+    };
     final report = ref.watch(
       reportSummaryProvider((
         fromLocalDay: localDayFrom(from),
@@ -36,10 +43,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reports'),
+        title: Text(l10n.reportsTitle),
         actions: [
           IconButton(
-            tooltip: 'Export CSV',
+            tooltip: l10n.exportCsv,
             onPressed: () => _exportCsv(from: from, to: to),
             icon: const Icon(Icons.ios_share),
           ),
@@ -51,13 +58,19 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           DropdownButtonFormField<_ReportPeriod>(
             key: const Key('report-period'),
             initialValue: _period,
-            decoration: const InputDecoration(labelText: 'Reporting period'),
-            items: const [
-              DropdownMenuItem(value: _ReportPeriod.day, child: Text('Day')),
-              DropdownMenuItem(value: _ReportPeriod.week, child: Text('Week')),
+            decoration: InputDecoration(labelText: l10n.reportPeriod),
+            items: [
+              DropdownMenuItem(
+                value: _ReportPeriod.day,
+                child: Text(l10n.periodDay),
+              ),
+              DropdownMenuItem(
+                value: _ReportPeriod.week,
+                child: Text(l10n.periodWeek),
+              ),
               DropdownMenuItem(
                 value: _ReportPeriod.month,
-                child: Text('Month'),
+                child: Text(l10n.periodMonth),
               ),
             ],
             onChanged: (value) {
@@ -74,7 +87,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           const SizedBox(height: 16),
           report.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Text('Could not load report: $error'),
+            error: (error, stack) => Text(l10n.couldNotLoadReport),
             data: (summary) => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -85,20 +98,20 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _periodTitle,
+                          periodTitle,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const SizedBox(height: 12),
                         _Metric(
-                          label: 'Actual',
+                          label: l10n.actual,
                           value: _formatDuration(summary.actual),
                         ),
                         _Metric(
-                          label: 'Planned',
+                          label: l10n.planned,
                           value: _formatDuration(summary.planned),
                         ),
                         _Metric(
-                          label: 'Variance',
+                          label: l10n.variance,
                           value: _formatDuration(
                             summary.variance,
                             signed: true,
@@ -117,12 +130,6 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       ),
     );
   }
-
-  String get _periodTitle => switch (_period) {
-    _ReportPeriod.day => 'Daily summary',
-    _ReportPeriod.week => 'Weekly summary',
-    _ReportPeriod.month => 'Monthly summary',
-  };
 
   Future<void> _selectDate() async {
     final selected = await showDatePicker(
@@ -147,13 +154,18 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             now: ref.read(clockProvider).now(),
           );
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('CSV ready to share')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.csvReadyToShare),
+          ),
+        );
       }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not export report: $error')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.couldNotExportReport),
+          ),
         );
       }
     }
