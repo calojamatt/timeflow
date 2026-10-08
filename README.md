@@ -48,10 +48,10 @@ timeflow/
 | Phase | Name | Status |
 |---|---|---|
 | 0 | Blueprint | ✅ Completed |
-| 1 | Work Session Engine + Today | ✅ Implemented — release candidate |
-| 2 | Planning & Calendar | ✅ Implemented — release candidate |
-| 3 | Reminders | ✅ Implemented — release candidate |
-| 4 | Reports & Export | 🚧 In progress — summaries and Reports screen implemented |
+| 1 | Work Session Engine + Today | ✅ Released — `v1.0.0` |
+| 2 | Planning & Calendar | ✅ Released — `v1.1.0` |
+| 3 | Reminders | ✅ Released — `v1.2.0` |
+| 4 | Reports & Export | ✅ Release candidate — `v1.3.0` |
 | 5 | Release hardening | ⬜ |
 | 6 | Cloud sync (optional) | ⬜ |
 
