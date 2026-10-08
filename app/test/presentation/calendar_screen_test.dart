@@ -9,6 +9,38 @@ import 'package:timeflow/presentation/providers.dart';
 import '../helpers/fake_clock.dart';
 
 void main() {
+  testWidgets('calendar day selector changes the day being reviewed', (
+    tester,
+  ) async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          databaseProvider.overrideWithValue(db),
+          clockProvider.overrideWithValue(
+            FakeClock(DateTime.utc(2026, 1, 5, 9)),
+          ),
+        ],
+        child: const TimeFlowApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Calendar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('2026-01-05 · Change day'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('calendar-day-picker')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('8').last);
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('2026-01-08 · Change day'), findsOneWidget);
+    expect(find.text('No planned blocks'), findsOneWidget);
+  });
+
   testWidgets('adds, edits, and deletes a planned block', (tester) async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);

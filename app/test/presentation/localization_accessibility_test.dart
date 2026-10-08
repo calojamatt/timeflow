@@ -8,6 +8,7 @@ import 'package:timeflow/presentation/providers.dart';
 import 'package:timeflow/presentation/today_screen.dart';
 import 'package:timeflow/presentation/reports_screen.dart';
 import 'package:timeflow/presentation/backup_screen.dart';
+import 'package:timeflow/presentation/main_navigation_shell.dart';
 
 import '../helpers/fake_clock.dart';
 
@@ -36,24 +37,22 @@ void main() {
                 .copyWith(textScaler: const TextScaler.linear(1.5)),
             child: child!,
           ),
-          home: const TodayScreen(),
+          home: const MainNavigationShell(
+            location: '/today',
+            child: TodayScreen(),
+          ),
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Hoy'), findsOneWidget);
+    expect(find.text('Reloj'), findsNWidgets(2));
     expect(find.text('Inactivo'), findsOneWidget);
     expect(find.byTooltip('Calendario'), findsOneWidget);
-    expect(
-      tester.getSemantics(find.byTooltip('Calendario')).tooltip,
-      'Calendario',
-    );
-    expect(tester.getSemantics(find.byTooltip('Informes')).tooltip, 'Informes');
-    expect(
-      tester.getSemantics(find.byTooltip('Copia y restauración')).tooltip,
-      'Copia y restauración',
-    );
+    expect(find.text('Calendario'), findsOneWidget);
+    expect(find.text('Informes'), findsOneWidget);
+    expect(find.text('Copia'), findsOneWidget);
+    expect(find.byTooltip('Copia y restauración'), findsOneWidget);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
@@ -75,12 +74,15 @@ void main() {
           locale: const Locale('es'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const ReportsScreen(),
+          home: const MainNavigationShell(
+            location: '/reports',
+            child: ReportsScreen(),
+          ),
         ),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Informes'), findsOneWidget);
+    expect(find.text('Informes'), findsNWidgets(2));
     expect(find.text('Resumen diario'), findsOneWidget);
     expect(find.text('Real'), findsOneWidget);
 
@@ -94,7 +96,10 @@ void main() {
           locale: const Locale('es'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const BackupScreen(),
+          home: const MainNavigationShell(
+            location: '/backup',
+            child: BackupScreen(),
+          ),
         ),
       ),
     );
@@ -102,6 +107,11 @@ void main() {
     expect(find.text('Copia y restauración'), findsOneWidget);
     expect(find.text('Crear copia de seguridad'), findsOneWidget);
     expect(find.text('Controles de privacidad'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Eliminar todos los datos locales'),
+      250,
+      scrollable: find.byType(Scrollable).last,
+    );
     expect(find.text('Eliminar todos los datos locales'), findsOneWidget);
   });
 }

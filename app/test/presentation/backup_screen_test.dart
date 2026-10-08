@@ -120,6 +120,8 @@ void main() {
           .save(ReminderPreferences(enabled: false));
       await _openBackup(tester, db, now, _FakeBackupFileService());
 
+      await tester.ensureVisible(find.byKey(const Key('delete-local-data')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('delete-local-data')));
       await tester.pumpAndSettle();
       expect(find.text('Delete all local data?'), findsOneWidget);
@@ -130,6 +132,8 @@ void main() {
         hasLength(1),
       );
 
+      await tester.ensureVisible(find.byKey(const Key('delete-local-data')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('delete-local-data')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Delete permanently'));

@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No changes yet.
+### Added
+
+- Persistent four-destination navigation with active-state styling, a Time Clock
+  title, and a visible Calendar day picker.
 
 ## [1.4.0] - 2026-10-08
 
@@ -18,7 +21,7 @@ No changes yet.
 - A confirmation-gated clear-data control removes sessions, plans, templates,
   reminder preferences, and scheduled local notifications.
 - App labels are consistently branded `TimeFlow`, and Android release variants
-- require private signing credentials rather than silently using the debug key.
+  require private signing credentials rather than silently using the debug key.
 - English/Spanish UI localization, Android/iOS locale declarations, and
   privacy and Android signing documentation.
 - Add accessibility/text-scale coverage and an idle timer battery smoke test;
