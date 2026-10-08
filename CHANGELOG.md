@@ -7,17 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+No changes yet.
+
+## [1.4.0] - 2026-10-08
+
 ### Added
 
 - Versioned JSON backups with schema 1–3 compatibility handling, validation,
   transactional restore, and native file share/picker UI.
 - A confirmation-gated clear-data control removes sessions, plans, templates,
   reminder preferences, and scheduled local notifications.
-- Release metadata now matches the `v1.3.0` tag, app labels are consistently
-  branded `TimeFlow`, and Android release variants require private signing
-  credentials rather than silently using the debug key.
-- Add English/Spanish UI localization, Android/iOS locale declarations, and
+- App labels are consistently branded `TimeFlow`, and Android release variants
+- require private signing credentials rather than silently using the debug key.
+- English/Spanish UI localization, Android/iOS locale declarations, and
   privacy and Android signing documentation.
+- Add accessibility/text-scale coverage and an idle timer battery smoke test;
+  full Flutter suite passes 103 tests.
 
 ## [1.3.0] - 2026-10-08
 

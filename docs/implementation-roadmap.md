@@ -13,7 +13,7 @@ product phases.
 | 2 — Planning and Calendar | `v1.1.0` | Released |
 | 3 — Reminders and notifications | `v1.2.0` | Released |
 | 4 — Reports and export | `v1.3.0` | Released |
-| 5 — Backup and release hardening | `v1.4.0` | In progress — backup, privacy controls, bilingual UI, and signing safeguards |
+| 5 — Backup and release hardening | `v1.4.0-rc.1` | Release candidate — code complete; signed store artifact awaits owner credentials |
 | 6 — Optional cloud synchronization | `v2.0.0` | Deferred until Phase 5 is complete |
 
 Phase 4 shipped after 89 Flutter tests, analyzer, Android debug build, and Pixel
@@ -349,7 +349,7 @@ PDF export can follow if it remains a confirmed product requirement.
 - Exported CSV data can be opened by spreadsheet software.
 - Historical edits preserve database invariants.
 
-## 7. Phase 5 — Backup and release hardening (next)
+## 7. Phase 5 — Backup and release hardening (release candidate)
 
 ### Objective
 
