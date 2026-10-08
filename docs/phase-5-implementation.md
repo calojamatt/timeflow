@@ -1,6 +1,8 @@
 # Phase 5 — Backup and Release Hardening
 
-Status: **in progress** — Phase 4 release `v1.3.0` is complete. Phase 5 board:
+Status: **release candidate `v1.4.0-rc.1`** — Phase 4 release `v1.3.0` is
+complete. Source code/repository gates pass; signed production store artifacts
+remain gated on owner credentials and platform validation. Phase 5 board:
 [Project #7](https://github.com/users/calojamatt/projects/7); issues #100–#105.
 
 ## Goal
@@ -40,6 +42,8 @@ Protect local user data and prepare TimeFlow for public distribution.
   require a private maintainer keystore for Android release packaging.
 - [x] Verify an unsigned release build is blocked with an actionable signing
   error instead of silently producing a debug-signed release.
+- [x] Prepare Phase 5 RC metadata and `1.4.0+5` app version; create release PRs
+  and RC tag.
 - [x] Pixel 10 Pro integration smoke test reached Backup & Restore and Reports;
   the AVD disconnected/crashed during teardown in the broader local integration
   run, so CI/device rerun remains part of the review gate.
