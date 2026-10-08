@@ -99,7 +99,9 @@ Exit gate:
 
 ## Phase 4 — Reports and Export
 
-Status: **release candidate v1.3.0; Android validation passed**
+Status: **released as v1.3.0**
+
+Status: **released as v1.3.0; Android validation passed**
 
 Objective: provide reliable historical summaries and portable data.
 
@@ -122,7 +124,7 @@ Exit gate:
 
 ## Phase 5 — Backup and Release Hardening
 
-Status: **planned; next implementation phase**
+Status: **in progress; backup format and transactional restore implemented**
 
 Objective: protect user data and prepare a public-quality release.
 

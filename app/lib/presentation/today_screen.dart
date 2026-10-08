@@ -26,6 +26,11 @@ class TodayScreen extends ConsumerWidget {
             tooltip: 'Reports',
             icon: const Icon(Icons.bar_chart),
           ),
+          IconButton(
+            onPressed: () => context.push('/backup'),
+            tooltip: 'Backup & Restore',
+            icon: const Icon(Icons.backup),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

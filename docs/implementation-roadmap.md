@@ -5,21 +5,22 @@ This document reconciles the original product conversation in
 working plan for finishing the current release and implementing the pending
 product phases.
 
-## Current status — 2026-10-07
+## Current status — 2026-10-08
 
 | Phase | Release | Status |
 |---|---|---|
 | 1 — Work sessions and Today | `v1.0.0` | Released |
 | 2 — Planning and Calendar | `v1.1.0` | Released |
 | 3 — Reminders and notifications | `v1.2.0` | Released |
-| 4 — Reports and export | `v1.3.0-rc.1` | Release candidate; final release PRs in progress |
-| 5 — Backup and release hardening | `v1.4.0` | Next implementation phase |
+| 4 — Reports and export | `v1.3.0` | Released |
+| 5 — Backup and release hardening | `v1.4.0` | In progress — backup/restore core implemented |
 | 6 — Optional cloud synchronization | `v2.0.0` | Deferred until Phase 5 is complete |
 
-Current Phase 4 validation: 89 Flutter tests, `dart analyze`, Android debug
-build, and all integration tests on the Pixel 10 Pro AVD passed. iOS validation
-is blocked on macOS/Xcode availability. See [Phase 4 details](phase-4-implementation.md)
-and [the implementation plan](implementation-plan.md).
+Phase 4 shipped after 89 Flutter tests, analyzer, Android debug build, and Pixel
+10 Pro integration tests passed. Phase 5 currently has versioned backup/restore
+with schema 1–3 import compatibility, transactional replacement, and tests. iOS
+validation is blocked on macOS/Xcode availability. See the [phase details](phase-5-implementation.md)
+and [implementation plan](implementation-plan.md).
 
 ## 1. Current product direction
 
@@ -286,10 +287,11 @@ Notification taps should deep-link to the appropriate screen, normally
 - Stopping a session cancels any relevant forgotten-session reminder.
 - Tapping a notification opens the correct screen.
 
-## 6. Phase 4 — Reports and export (release candidate)
+## 6. Phase 4 — Reports and export (released)
 
-Status: `v1.3.0-rc.1`; implementation and Android validation are complete. The
-final `v1.3.0` release PRs/tag are the remaining gate.
+Status: released as `v1.3.0`; release PRs #98/#99 were merged and production
+tag `v1.3.0` was published. Android validation passed; iOS device validation is
+pending a macOS/Xcode environment.
 
 ### Objective
 
@@ -393,11 +395,10 @@ explicitly changes that rule.
 
 ## 9. Recommended delivery order
 
-1. Complete Phase 4 release PRs and publish `v1.3.0`.
-2. Create the Phase 5 GitHub project/issues and implement backup, restore,
+1. Complete Phase 5 GitHub project/issues and implement backup, restore,
    deletion/privacy, accessibility, and release hardening.
-3. Release Phase 5 as `v1.4.0`.
-4. Re-evaluate Phase 6 cloud sync before creating a backend or storing user data
+2. Release Phase 5 as `v1.4.0`.
+3. Re-evaluate Phase 6 cloud sync before creating a backend or storing user data
    remotely; retain local-first behavior if sync is not justified.
 
 Each phase should follow the existing XP workflow:

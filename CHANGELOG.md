@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No changes yet.
+### Added
 
-## [1.3.0] - 2026-10-07
+- Versioned JSON backups with schema 1–3 compatibility handling, validation,
+  transactional restore, and native file share/picker UI.
+
+## [1.3.0] - 2026-10-08
 
 ### Added
 
