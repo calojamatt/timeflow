@@ -35,22 +35,57 @@ class CalendarScreen extends ConsumerWidget {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
+                Card(
+                  key: const Key('calendar-day-card'),
+                  clipBehavior: Clip.antiAlias,
+                  child: ListTile(
                     key: const Key('calendar-day-picker'),
-                    onPressed: () => _selectDay(context, ref, date),
-                    icon: const Icon(Icons.event),
-                    label: Text(
-                      '${_formatDate(date)} · ${l10n.changeCalendarDay}',
+                    onTap: () => _selectDay(context, ref, date),
+                    leading: Icon(
+                      Icons.event,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
+                    title: Text(_formatDate(date)),
+                    subtitle: Text(l10n.changeCalendarDay),
+                    trailing: const Icon(Icons.chevron_right),
                   ),
                 ),
                 const SizedBox(height: 16),
                 _SummaryCard(state: calendar),
                 const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+                  child: Text(
+                    l10n.plannedBlocksTitle,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
                 if (calendar.blocks.isEmpty)
-                  Center(child: Text(l10n.noPlannedBlocks))
+                  Card(
+                    key: const Key('empty-planned-blocks-card'),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.event_busy,
+                            size: 32,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(l10n.noPlannedBlocks),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            onPressed: () => _editBlock(context, ref),
+                            icon: const Icon(Icons.add),
+                            label: Text(l10n.addPlannedBlock),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 else
                   ...calendar.blocks.map(
                     (block) => _BlockTile(
@@ -157,16 +192,25 @@ class _BlockTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return ListTile(
-      title: Text(
-        '${formatMinute(block.startMinute)} – ${formatMinute(block.endMinute)}',
-      ),
-      subtitle: Text(formatDuration(block.duration)),
-      onTap: onEdit,
-      trailing: IconButton(
-        onPressed: onDelete,
-        tooltip: l10n.deletePlannedBlock,
-        icon: const Icon(Icons.delete_outline),
+    return Card(
+      key: Key('planned-block-card-${block.id}'),
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        title: Text(
+          '${formatMinute(block.startMinute)} – ${formatMinute(block.endMinute)}',
+        ),
+        subtitle: Text(
+          [
+            formatDuration(block.duration),
+            if (block.note != null && block.note!.isNotEmpty) block.note!,
+          ].join(' · '),
+        ),
+        onTap: onEdit,
+        trailing: IconButton(
+          onPressed: onDelete,
+          tooltip: l10n.deletePlannedBlock,
+          icon: const Icon(Icons.delete_outline),
+        ),
       ),
     );
   }

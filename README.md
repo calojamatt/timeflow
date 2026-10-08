@@ -7,8 +7,8 @@ Built with **Flutter** for **iOS and Android**, with English and Spanish UI.
 ## What it does
 
 - **Clock in / clock out** to record actual working periods (work sessions).
-- **Today screen** with a live timer, session history, and daily total.
-- **Planning & calendar** for planned hours, kept separate from actuals so the app can compare them.
+- **Time Clock** with a live timer, today's total, and card-based session history.
+- **Calendar** for planned hours, day selection, actual-versus-planned summary, and card-based planned blocks.
 - **Persistent navigation** between Time Clock, Calendar, Reports, and Backup; select a date directly in Calendar.
 - **Reminders** (shift start, "you forgot to stop").
 - **Reports** with weekly/monthly summaries and per-day detail.

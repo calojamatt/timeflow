@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Group Time Clock metrics/history and Calendar day/planned-block sections into
+  consistent Material cards, including empty-state cards.
+
 ### Added
 
 - Persistent four-destination navigation with active-state styling, a Time Clock
