@@ -45,9 +45,8 @@ Protect local user data and prepare TimeFlow for public distribution.
   error instead of silently producing a debug-signed release.
 - [x] Prepare `1.4.0+5` app version, create release PRs #109/#110, RC tag
   `v1.4.0-rc.1`, production source tag `v1.4.0`, and GitHub release.
-- [x] Pixel 10 Pro integration smoke test reached Backup & Restore and Reports;
-  the AVD disconnected/crashed during teardown in the broader local integration
-  run, so CI/device rerun remains part of the review gate.
+- [x] Pixel 10 Pro AVD integration runs passed individually for app navigation
+  (Backup & Restore and Reports), Today start/run/stop, and Calendar navigation.
 - [ ] Additional screen-reader/text-scale device review, supply production
   signing credentials, prepare signed artifacts, and complete final `v1.4.0`
   gates.
@@ -61,6 +60,22 @@ The GitHub release is a source release and contains no signed production APK or
 AAB. Issue #104 remains open for the release owner's signing credentials,
 signed-artifact verification, and iOS/macOS device validation. Phase 6 remains
 optional/deferred until sync requirements and security decisions are approved.
+
+### Pixel 10 Pro interaction run (2026-10-08)
+
+Device: `Pixel_10_Pro` AVD, Android 17 / API 37 (`emulator-5554`). Each file was
+run separately to avoid the emulator disconnect observed when Flutter tears
+down a multi-file integration invocation:
+
+| Test file | Interaction flow | Result |
+|---|---|---|
+| `integration_test/app_test.dart` | Boot Today → open Backup & Restore → return → open Reports and check summary metrics | Passed |
+| `integration_test/work_session_flow_test.dart` | Start → running timer/Start hidden → stop → Idle | Passed |
+| `integration_test/planning_flow_test.dart` | Today → Calendar → planned summary and template/add actions visible | Passed |
+
+The AVD remained connected after each isolated run. These flows complement the
+automated screen/widget tests for backup creation/restore confirmation, CSV
+export, history edit/delete, and clear-data confirmation.
 
 ### Backup compatibility policy
 
