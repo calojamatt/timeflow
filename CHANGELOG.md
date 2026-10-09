@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Group Time Clock metrics/history and Calendar day/planned-block sections into
   consistent Material cards, including empty-state cards.
+- Replace the Calendar day dialog with an inline month calendar, and improve
+  planned-block and weekly-template time entry with a 24-hour picker, automatic
+  colon insertion, and end-of-day midnight support.
 
 ### Added
 
 - Persistent four-destination navigation with active-state styling, a Time Clock
   title, and a visible Calendar day picker.
+- Custom inclusive date ranges for Reports summaries and CSV exports.
 
 ## [1.4.0] - 2026-10-08
 

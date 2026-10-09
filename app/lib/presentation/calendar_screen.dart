@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:timeflow/domain/planned_block.dart';
 import 'package:timeflow/l10n/app_localizations.dart';
 
@@ -35,20 +36,11 @@ class CalendarScreen extends ConsumerWidget {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Card(
-                  key: const Key('calendar-day-card'),
-                  clipBehavior: Clip.antiAlias,
-                  child: ListTile(
-                    key: const Key('calendar-day-picker'),
-                    onTap: () => _selectDay(context, ref, date),
-                    leading: Icon(
-                      Icons.event,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    title: Text(_formatDate(date)),
-                    subtitle: Text(l10n.changeCalendarDay),
-                    trailing: const Icon(Icons.chevron_right),
-                  ),
+                _InlineMonthCalendar(
+                  selectedDate: date,
+                  onDateSelected: (selected) => ref
+                      .read(calendarControllerProvider.notifier)
+                      .selectDay(selected),
                 ),
                 const SizedBox(height: 16),
                 _SummaryCard(state: calendar),
@@ -101,22 +93,6 @@ class CalendarScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _selectDay(
-    BuildContext context,
-    WidgetRef ref,
-    DateTime date,
-  ) async {
-    final selected = await showDatePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      initialDate: date,
-    );
-    if (selected != null && context.mounted) {
-      await ref.read(calendarControllerProvider.notifier).selectDay(selected);
-    }
-  }
-
   Future<void> _editBlock(
     BuildContext context,
     WidgetRef ref, {
@@ -151,6 +127,195 @@ class CalendarScreen extends ConsumerWidget {
           startMinute: result.startMinute,
           endMinute: result.endMinute,
         );
+  }
+}
+
+class _InlineMonthCalendar extends StatefulWidget {
+  const _InlineMonthCalendar({
+    required this.selectedDate,
+    required this.onDateSelected,
+  });
+
+  final DateTime selectedDate;
+  final Future<void> Function(DateTime date) onDateSelected;
+
+  @override
+  State<_InlineMonthCalendar> createState() => _InlineMonthCalendarState();
+}
+
+class _InlineMonthCalendarState extends State<_InlineMonthCalendar> {
+  late DateTime _visibleMonth;
+
+  @override
+  void initState() {
+    super.initState();
+    _visibleMonth = DateTime(
+      widget.selectedDate.year,
+      widget.selectedDate.month,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _InlineMonthCalendar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedDate.year != widget.selectedDate.year ||
+        oldWidget.selectedDate.month != widget.selectedDate.month) {
+      _visibleMonth = DateTime(
+        widget.selectedDate.year,
+        widget.selectedDate.month,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final materialL10n = MaterialLocalizations.of(context);
+    final firstOfMonth = DateTime(_visibleMonth.year, _visibleMonth.month);
+    final leadingDays = firstOfMonth.weekday - DateTime.monday;
+    final daysInMonth = DateTime(
+      _visibleMonth.year,
+      _visibleMonth.month + 1,
+      0,
+    ).day;
+    final cellCount = ((leadingDays + daysInMonth + 6) ~/ 7) * 7;
+
+    return Card(
+      key: const Key('calendar-day-card'),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    materialL10n.formatMonthYear(_visibleMonth),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                IconButton(
+                  tooltip: materialL10n.previousMonthTooltip,
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () => _changeMonth(-1),
+                  icon: const Icon(Icons.chevron_left),
+                ),
+                IconButton(
+                  tooltip: materialL10n.nextMonthTooltip,
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () => _changeMonth(1),
+                  icon: const Icon(Icons.chevron_right),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                for (
+                  var weekday = DateTime.monday;
+                  weekday <= DateTime.sunday;
+                  weekday++
+                )
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        _weekdayName(l10n, weekday).substring(0, 2),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            GridView.builder(
+              key: const Key('calendar-month-grid'),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: cellCount,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                mainAxisExtent: 38,
+              ),
+              itemBuilder: (context, index) {
+                final day = index - leadingDays + 1;
+                final cellDate = DateTime(
+                  _visibleMonth.year,
+                  _visibleMonth.month,
+                  day,
+                );
+                final isCurrentMonth = cellDate.month == _visibleMonth.month;
+                final isSelected = _sameDate(cellDate, widget.selectedDate);
+                final isToday = _sameDate(cellDate, DateTime.now());
+                final colorScheme = Theme.of(context).colorScheme;
+
+                return Center(
+                  child: InkWell(
+                    key: Key('calendar-day-${_formatDate(cellDate)}'),
+                    customBorder: const CircleBorder(),
+                    onTap: () => _selectDate(cellDate),
+                    child: Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isSelected ? colorScheme.primary : null,
+                        border: isToday && !isSelected
+                            ? Border.all(color: colorScheme.primary)
+                            : null,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${cellDate.day}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: isSelected
+                              ? colorScheme.onPrimary
+                              : isCurrentMonth
+                              ? colorScheme.onSurface
+                              : colorScheme.onSurfaceVariant.withValues(
+                                  alpha: 0.45,
+                                ),
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                _formatDate(widget.selectedDate),
+                key: const Key('calendar-selected-date'),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _changeMonth(int offset) {
+    setState(
+      () => _visibleMonth = DateTime(
+        _visibleMonth.year,
+        _visibleMonth.month + offset,
+      ),
+    );
+  }
+
+  Future<void> _selectDate(DateTime date) async {
+    if (date.year != _visibleMonth.year || date.month != _visibleMonth.month) {
+      setState(() => _visibleMonth = DateTime(date.year, date.month));
+    }
+    await widget.onDateSelected(date);
   }
 }
 
@@ -269,15 +434,17 @@ class _BlockDialogState extends State<_BlockDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(
+          _timeField(
+            context: context,
             controller: _start,
-            decoration: InputDecoration(labelText: l10n.startTime),
-            keyboardType: TextInputType.datetime,
+            label: l10n.startTime,
+            pickerKey: 'start-time-picker',
           ),
-          TextField(
+          _timeField(
+            context: context,
             controller: _end,
-            decoration: InputDecoration(labelText: l10n.endTime),
-            keyboardType: TextInputType.datetime,
+            label: l10n.endTime,
+            pickerKey: 'end-time-picker',
           ),
           TextField(
             controller: _note,
@@ -299,7 +466,8 @@ class _BlockDialogState extends State<_BlockDialog> {
 
   void _save() {
     final start = parseMinute(_start.text);
-    final end = parseMinute(_end.text);
+    final parsedEnd = parseMinute(_end.text);
+    final end = parsedEnd == 0 && start != null && start > 0 ? 1440 : parsedEnd;
     if (start == null || end == null || end <= start) {
       setState(
         () => _error = AppLocalizations.of(context)!.validTimeRangeError,
@@ -377,13 +545,17 @@ class _TemplateDialogState extends State<_TemplateDialog> {
             ],
             onChanged: (value) => setState(() => _weekday = value ?? _weekday),
           ),
-          TextField(
+          _timeField(
+            context: context,
             controller: _start,
-            decoration: InputDecoration(labelText: l10n.startTime),
+            label: l10n.startTime,
+            pickerKey: 'start-time-picker',
           ),
-          TextField(
+          _timeField(
+            context: context,
             controller: _end,
-            decoration: InputDecoration(labelText: l10n.endTime),
+            label: l10n.endTime,
+            pickerKey: 'end-time-picker',
           ),
           if (_error != null)
             Text(_error!, style: const TextStyle(color: Colors.red)),
@@ -401,7 +573,8 @@ class _TemplateDialogState extends State<_TemplateDialog> {
 
   void _save() {
     final start = parseMinute(_start.text);
-    final end = parseMinute(_end.text);
+    final parsedEnd = parseMinute(_end.text);
+    final end = parsedEnd == 0 && start != null && start > 0 ? 1440 : parsedEnd;
     if (_name.text.trim().isEmpty ||
         start == null ||
         end == null ||
@@ -440,8 +613,14 @@ DateTime _dateFromDay(int localDay) =>
 String _formatDate(DateTime date) =>
     '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
-String formatMinute(int minute) =>
-    '${(minute ~/ 60).toString().padLeft(2, '0')}:${(minute % 60).toString().padLeft(2, '0')}';
+bool _sameDate(DateTime first, DateTime second) =>
+    first.year == second.year &&
+    first.month == second.month &&
+    first.day == second.day;
+
+String formatMinute(int minute) => minute == 1440
+    ? '00:00'
+    : '${(minute ~/ 60).toString().padLeft(2, '0')}:${(minute % 60).toString().padLeft(2, '0')}';
 
 int? parseMinute(String text) {
   final match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(text.trim());
@@ -456,4 +635,84 @@ String formatDuration(Duration duration) {
   final hours = duration.inHours.toString().padLeft(2, '0');
   final minutes = (duration.inMinutes % 60).toString().padLeft(2, '0');
   return '$hours:${minutes}h';
+}
+
+Widget _timeField({
+  required BuildContext context,
+  required TextEditingController controller,
+  required String label,
+  required String pickerKey,
+}) {
+  return TextField(
+    controller: controller,
+    decoration: InputDecoration(
+      labelText: label,
+      suffixIcon: IconButton(
+        key: Key(pickerKey),
+        tooltip: label,
+        icon: const Icon(Icons.access_time),
+        onPressed: () => _pickTime(context, controller),
+      ),
+    ),
+    keyboardType: TextInputType.datetime,
+    inputFormatters: const [_AutoColonTimeInputFormatter()],
+  );
+}
+
+Future<void> _pickTime(
+  BuildContext context,
+  TextEditingController controller,
+) async {
+  final currentMinute = parseMinute(controller.text) ?? 9 * 60;
+  final selected = await showTimePicker(
+    context: context,
+    initialTime: TimeOfDay(
+      hour: currentMinute ~/ 60,
+      minute: currentMinute % 60,
+    ),
+    builder: (context, child) => MediaQuery(
+      data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+      child: child!,
+    ),
+  );
+  if (selected == null) return;
+  controller.text = formatMinute(selected.hour * 60 + selected.minute);
+}
+
+class _AutoColonTimeInputFormatter extends TextInputFormatter {
+  const _AutoColonTimeInputFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.length > 4) return oldValue;
+
+    final formatted = digits.length > 2
+        ? '${digits.substring(0, 2)}:${digits.substring(2)}'
+        : digits;
+
+    int formattedOffset(int offset) {
+      final boundedOffset = offset.clamp(0, newValue.text.length);
+      final digitsBeforeCursor = newValue.text
+          .substring(0, boundedOffset)
+          .replaceAll(RegExp(r'[^0-9]'), '')
+          .length;
+      final boundedDigits = digitsBeforeCursor > digits.length
+          ? digits.length
+          : digitsBeforeCursor;
+      return boundedDigits > 2 ? boundedDigits + 1 : boundedDigits;
+    }
+
+    return newValue.copyWith(
+      text: formatted,
+      selection: TextSelection(
+        baseOffset: formattedOffset(newValue.selection.baseOffset),
+        extentOffset: formattedOffset(newValue.selection.extentOffset),
+      ),
+      composing: TextRange.empty,
+    );
+  }
 }

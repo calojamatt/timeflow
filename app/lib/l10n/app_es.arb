@@ -50,6 +50,8 @@
   "periodDay": "Día",
   "periodWeek": "Semana",
   "periodMonth": "Mes",
+  "periodCustom": "Rango personalizado",
+  "customRangeSummary": "Resumen del rango personalizado",
   "dailySummary": "Resumen diario",
   "weeklySummary": "Resumen semanal",
   "monthlySummary": "Resumen mensual",

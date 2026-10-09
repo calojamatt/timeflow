@@ -13,6 +13,10 @@ void main() {
   testWidgets('keeps navigation visible and switches active destinations', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(412, 915);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
 
@@ -50,7 +54,8 @@ void main() {
           .selectedIndex,
       1,
     );
-    expect(find.byKey(const Key('calendar-day-picker')), findsOneWidget);
+    expect(find.byKey(const Key('calendar-day-card')), findsOneWidget);
+    expect(find.byKey(const Key('calendar-day-2026-01-01')), findsOneWidget);
     expect(find.text('No planned blocks'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Reports'));
