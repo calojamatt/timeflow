@@ -392,6 +392,18 @@ abstract class AppLocalizations {
   /// **'Month'**
   String get periodMonth;
 
+  /// No description provided for @periodCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom range'**
+  String get periodCustom;
+
+  /// No description provided for @customRangeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom range summary'**
+  String get customRangeSummary;
+
   /// No description provided for @dailySummary.
   ///
   /// In en, this message translates to:

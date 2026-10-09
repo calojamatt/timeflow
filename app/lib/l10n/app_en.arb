@@ -50,6 +50,8 @@
   "periodDay": "Day",
   "periodWeek": "Week",
   "periodMonth": "Month",
+  "periodCustom": "Custom range",
+  "customRangeSummary": "Custom range summary",
   "dailySummary": "Daily summary",
   "weeklySummary": "Weekly summary",
   "monthlySummary": "Monthly summary",

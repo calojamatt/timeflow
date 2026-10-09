@@ -6,7 +6,7 @@ import 'package:timeflow/l10n/app_localizations.dart';
 import 'providers.dart';
 import 'history_sessions_section.dart';
 
-enum _ReportPeriod { day, week, month }
+enum _ReportPeriod { day, week, month, custom }
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -18,6 +18,7 @@ class ReportsScreen extends ConsumerStatefulWidget {
 class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   late DateTime _date;
   _ReportPeriod _period = _ReportPeriod.day;
+  DateTimeRange? _customRange;
 
   @override
   void initState() {
@@ -28,11 +29,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final (from, to) = _bounds(_date, _period);
+    final (from, to) = _bounds(_date, _period, _customRange);
     final periodTitle = switch (_period) {
       _ReportPeriod.day => l10n.dailySummary,
       _ReportPeriod.week => l10n.weeklySummary,
       _ReportPeriod.month => l10n.monthlySummary,
+      _ReportPeriod.custom => l10n.customRangeSummary,
     };
     final report = ref.watch(
       reportSummaryProvider((
@@ -72,15 +74,32 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                 value: _ReportPeriod.month,
                 child: Text(l10n.periodMonth),
               ),
+              DropdownMenuItem(
+                value: _ReportPeriod.custom,
+                child: Text(l10n.periodCustom),
+              ),
             ],
             onChanged: (value) {
-              if (value != null) setState(() => _period = value);
+              if (value != null) {
+                setState(() {
+                  if (value == _ReportPeriod.custom && _customRange == null) {
+                    final selectedDay = _dateOnly(_date);
+                    _customRange = DateTimeRange(
+                      start: selectedDay,
+                      end: selectedDay,
+                    );
+                  }
+                  _period = value;
+                });
+              }
             },
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
             key: const Key('report-select-date'),
-            onPressed: _selectDate,
+            onPressed: _period == _ReportPeriod.custom
+                ? _selectDateRange
+                : _selectDate,
             icon: const Icon(Icons.event),
             label: Text(_formatRange(from, to)),
           ),
@@ -141,6 +160,24 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     if (selected != null && mounted) setState(() => _date = selected);
   }
 
+  Future<void> _selectDateRange() async {
+    final (from, to) = _bounds(_date, _ReportPeriod.custom, _customRange);
+    final selected = await showDateRangePicker(
+      context: context,
+      initialDateRange: DateTimeRange(start: from, end: to),
+      firstDate: DateTime(1970),
+      lastDate: DateTime(2100),
+    );
+    if (selected != null && mounted) {
+      setState(
+        () => _customRange = DateTimeRange(
+          start: _dateOnly(selected.start),
+          end: _dateOnly(selected.end),
+        ),
+      );
+    }
+  }
+
   Future<void> _exportCsv({
     required DateTime from,
     required DateTime to,
@@ -171,8 +208,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     }
   }
 
-  (DateTime, DateTime) _bounds(DateTime date, _ReportPeriod period) {
-    final day = DateTime(date.year, date.month, date.day);
+  (DateTime, DateTime) _bounds(
+    DateTime date,
+    _ReportPeriod period,
+    DateTimeRange? customRange,
+  ) {
+    final day = _dateOnly(date);
     return switch (period) {
       _ReportPeriod.day => (day, day),
       _ReportPeriod.week => (
@@ -183,8 +224,15 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         DateTime(day.year, day.month),
         DateTime(day.year, day.month + 1).subtract(const Duration(days: 1)),
       ),
+      _ReportPeriod.custom => (
+        _dateOnly(customRange?.start ?? day),
+        _dateOnly(customRange?.end ?? day),
+      ),
     };
   }
+
+  DateTime _dateOnly(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
 
   String _formatRange(DateTime from, DateTime to) => from == to
       ? _formatDate(from)
